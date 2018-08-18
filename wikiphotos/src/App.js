@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { ArticleList, ImageContainer } from './components/';
 import styled from 'styled-components';
-import filter from 'lodash/filter';
 import has from 'lodash/has';
+import forEach from 'lodash/forEach';
 
 const Wrapper = styled.div`
   position: relative;
@@ -29,13 +29,37 @@ class App extends Component {
       return response.json();
     })
     .then(data => {
-      const locationEnabledPhotos = filter(data, photo => {
-        return has(photo, 'location');
+      this.setState({ photoData: data });
+
+      forEach(data, (photo, index) => {
+        if(has(photo, 'location')) {
+          fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
+            {
+              method: 'POST',
+              headers: new Headers( {
+                  'Api-User-Agent': 'unsplashipedia/0.1 (https://vile.studio; oliver@oliverbaker.org)',
+                  'Content-Type': 'application/json; charset=UTF-8',
+              } )
+            })
+          .then(response => {
+            if (response.status >= 400) {
+              throw new Error("Bad response from server");
+            }
+            return response.json();
+          })
+          .then(data => {
+            if(has(data, 'query.pages[0].revisions[0]')) {
+              this.setState((state) => {
+                console.log(state);
+                let newPhotoData = state.photoData;
+                newPhotoData[index].wikipediaDescription = data.query.pages[0].revisions[0].content;
+                return { photoData: newPhotoData };
+              });
+            }
+          });
+        }
       });
 
-      this.setState({ photos: locationEnabledPhotos });
-
-      console.log(locationEnabledPhotos);
       this.resumeRotation();
     });
   }
@@ -44,7 +68,7 @@ class App extends Component {
     this.setState((state) => {
       return {
         activeIndex: state.activeIndex - 1 === 0
-          ? state.photos.length - 1
+          ? state.photoData.length - 1
           : state.activeIndex - 1,
       }
     });
@@ -53,7 +77,7 @@ class App extends Component {
   nextArticle = () => {
     this.setState((state) => {
       return {
-        activeIndex: state.activeIndex + 1 === state.photos.length
+        activeIndex: state.activeIndex + 1 === state.photoData.length
           ? 0
           : state.activeIndex+1,
       }
@@ -86,18 +110,18 @@ class App extends Component {
   }
 
   render() {
-    const { activeIndex, photos } = this.state;
+    const { activeIndex, photoData } = this.state;
 
-    return !!photos ? (
+    return !!photoData ? (
       <Wrapper>
         <ImageContainer
-          photos={photos}
+          photos={photoData}
           activeIndex={activeIndex}
         />
         <ArticleList
           setIndex={this.setIndex}
           activeIndex={activeIndex}
-          data={photos}
+          data={photoData}
         />
       </Wrapper>
     ) : (<Wrapper />);
