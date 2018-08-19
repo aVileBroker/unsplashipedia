@@ -6,7 +6,7 @@ import { Spring, animated } from 'react-spring';
 
 const Image = styled(animated.div)`
   background-image: url('${props => props.background}');
-  background-position: top;
+  background-position: center;
   background-size: cover;
 
   width: 100%;
@@ -46,6 +46,7 @@ export const ImageContainer = ({ photos, activeIndex }) => map(photos, (p, i) =>
   <Spring
     config={{
       duration: 1200,
+      delay: 1200,
     }}
     from={{ opacity: 0, zIndex: -1 }}
     to={{

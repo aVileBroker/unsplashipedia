@@ -26,7 +26,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch('https://api.unsplash.com/photos/random?client_id=e2b41587283713a6edaa232ae6820afe8c9a6c0b6164c123df7582b1abcb565c&collections=1599706&count=10')
+    fetch('https://api.unsplash.com/photos/random?client_id=e2b41587283713a6edaa232ae6820afe8c9a6c0b6164c123df7582b1abcb565c&count=500')
     .then(response => {
       if (response.status >= 400) {
         throw new Error("Bad response from server");
@@ -34,7 +34,7 @@ class App extends Component {
       return response.json();
     })
     .then(data => {
-      const filteredData = filter(data, d => { return has(d, 'location'); });
+      const filteredData = filter(data, d => { return has(d, 'location.title'); });
 
       this.setState({ photoData: filteredData });
 

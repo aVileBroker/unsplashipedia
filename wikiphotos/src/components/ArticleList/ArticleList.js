@@ -12,7 +12,7 @@ const List = styled.div`
   bottom: 0;
   left: 0;
 
-  width: ${props => props.width}px;
+  width: 100%;
 
   padding-left: 2rem;
 
@@ -28,7 +28,7 @@ export const ArticleList = ({
   page,
   windowWidth,
 }) => (
-  <List width={32+(304 * data.length)} page={page}>
+  <List page={page}>
     {map(data, ({ id, description, links, location, isActive }, index) => (
       <ArticleCard
         key={id}
