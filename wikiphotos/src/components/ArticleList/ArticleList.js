@@ -14,8 +14,6 @@ const List = styled.div`
 
   width: 100%;
 
-  padding-left: 2rem;
-
   display: flex;
   flex-direction: row;
   align-items: flex-end;

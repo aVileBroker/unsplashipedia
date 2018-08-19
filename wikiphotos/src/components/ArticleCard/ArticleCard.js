@@ -27,26 +27,35 @@ const CardContent = styled.div`
   line-height: 1.1;
 `;
 
-const Gradient = styled(animated.div)`
+const LinkContainer = styled(animated.div)`
+  width: 100%;
+  position: absolute;
+  bottom: .75rem;
+  left: 0;
+  z-index: 2;
+`;
+
+const Gradient = styled.div`
   width: 100%;
   height: 6rem;
 
   position: absolute;
-  bottom: 1.5rem;
+  bottom: 0;
   left: 0;
   z-index: 1;
 
   background-image:linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,.75) 50%, rgba(255,255,255,0));
 `;
 
-const Link = styled(animated.a)`
+const Link = styled.a`
   display: inline-block;
   padding: .75rem 1rem;
-  color: #777;
+  color: #77f;
+  text-decoration: none;
   text-transform: capitalize;
 
   position: absolute;
-  bottom: 1rem;
+  bottom: 0;
   ${props => props.side}: 1rem;
   z-index: 2;
 
@@ -78,7 +87,7 @@ export const ArticleCard = ({
     }}
     to={{
       height: isActive ? '16rem' : '3rem',
-      transform: `translateX(${(-1 * (activeIndex * 304))}px)`,
+      transform: `translateX(${(-1 * (activeIndex * 336)) + 48}px)`,
     }}
     native
   >
@@ -92,11 +101,11 @@ export const ArticleCard = ({
           native
         >
           {isActive && ( styles => (
-            <div>
-              <Gradient style={styles}/>
-              <Link side="left" href={linkUrl} style={styles}>VIEW PHOTO</Link>
-              <Link side="right" href={wikiUrl} style={styles}>READ MORE</Link>
-            </div>
+            <LinkContainer style={styles}>
+              <Gradient />
+              <Link side="left" href={linkUrl}>VIEW PHOTO</Link>
+              <Link side="right" href={wikiUrl}>READ MORE</Link>
+            </LinkContainer>
           ))}
         </Transition>
       </Card>

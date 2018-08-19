@@ -44,6 +44,7 @@ const Title = styled.div`
 
 export const ImageContainer = ({ photos, activeIndex }) => map(photos, (p, i) => (
   <Spring
+    key={get(photos[i], 'id')}
     config={{
       duration: 1200,
       delay: 1200,
@@ -54,7 +55,7 @@ export const ImageContainer = ({ photos, activeIndex }) => map(photos, (p, i) =>
       zIndex: activeIndex === i ? 0 : -1,
     }}
     native
-  >{ styles => (<Image key={get(photos[i], 'id')} style={styles} color={get(photos[i], 'color')} background={get(photos[i], 'urls.full', '')}>
+  >{ styles => (<Image style={styles} color={get(photos[i], 'color')} background={get(photos[i], 'urls.full', '')}>
       <Gradient />
       <Title>{get(photos[i], 'location.title')}</Title>
     </Image>)

@@ -124,10 +124,12 @@ class App extends Component {
       <Wrapper innerRef={w => this.wrapper = w}>
         {!!photoData && [
           <ImageContainer
+            key="photo"
             photos={photoData}
             activeIndex={activeIndex}
           />,
           <ArticleList
+            key="list"
             setIndex={this.setIndex}
             activeIndex={activeIndex}
             windowWidth={this.wrapper.clientWidth}
