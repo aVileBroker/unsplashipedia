@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import map from 'lodash/map';
 import get from 'lodash/get';
-import { Transition, animated } from 'react-spring';
+import { Spring, animated } from 'react-spring';
 
 const Image = styled(animated.div)`
   background-image: url('${props => props.background}');
@@ -34,7 +34,7 @@ const Gradient = styled.div`
 const Title = styled.div`
   color: white;
   font-size: 2.5rem;
-  margin: 3rem;
+  margin: 2rem 3rem;
   text-shadow: 0px .125rem .75rem rgba(0,0,0,0.25);
   z-index: 2;
   position: absolute;
@@ -42,16 +42,20 @@ const Title = styled.div`
   left: 0;
 `;
 
-export const ImageContainer = ({ photos, activeIndex }) => (
-  <Transition
-    keys={map(photos, photo => photo.id)}
-    from={{ opacity: 0 }}
-    enter={{ opacity: 1 }}
-    leave={{ opacity: 0 }}
+export const ImageContainer = ({ photos, activeIndex }) => map(photos, (p, i) => (
+  <Spring
+    config={{
+      duration: 1200,
+    }}
+    from={{ opacity: 0, zIndex: -1 }}
+    to={{
+      opacity: activeIndex === i ? 1 : 0,
+      zIndex: activeIndex === i ? 0 : -1,
+    }}
     native
-  >{ styles => (<Image key={get(photos[activeIndex], 'id')} style={styles} color={get(photos[activeIndex], 'color')} background={get(photos[activeIndex], 'urls.full', '')}>
+  >{ styles => (<Image key={get(photos[i], 'id')} style={styles} color={get(photos[i], 'color')} background={get(photos[i], 'urls.full', '')}>
       <Gradient />
-      <Title>{get(photos[activeIndex], 'location.name')}</Title>
+      <Title>{get(photos[i], 'location.title')}</Title>
     </Image>)
-  }</Transition>
-);
+  }</Spring>
+));

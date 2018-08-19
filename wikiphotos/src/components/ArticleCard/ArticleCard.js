@@ -47,7 +47,7 @@ const Link = styled(animated.a)`
 
   position: absolute;
   bottom: 1rem;
-  right: 1rem;
+  ${props => props.side}: 1rem;
   z-index: 2;
 
   background-color: white;
@@ -60,20 +60,30 @@ const Link = styled(animated.a)`
 export const ArticleCard = ({
   text,
   title,
+  page = 0,
+  activeIndex,
   isActive,
   linkUrl,
+  wikiUrl,
+  windowWidth,
   onClick,
 }) => (
   <Spring
     config={{
-      duration: 300,
+      duration: 1200,
     }}
-    from={{ height: '3rem' }}
-    to={{ height: isActive ? '16rem' : '3rem' }}
+    from={{
+      height: '3rem',
+      transform: 'translateX(0px)',
+    }}
+    to={{
+      height: isActive ? '16rem' : '3rem',
+      transform: `translateX(${(-1 * (activeIndex * 304))}px)`,
+    }}
     native
   >
     {styles => (
-      <Card onClick={onClick} style={{...styles, boxShadow: styles.shadow}}>
+      <Card onClick={onClick} style={styles}>
         <CardContent>{text}</CardContent>
         <Transition
           from={{ transform: 'translateY(12rem)' }}
@@ -84,7 +94,8 @@ export const ArticleCard = ({
           {isActive && ( styles => (
             <div>
               <Gradient style={styles}/>
-              <Link href={linkUrl} style={styles}>READ MORE</Link>
+              <Link side="left" href={linkUrl} style={styles}>VIEW PHOTO</Link>
+              <Link side="right" href={wikiUrl} style={styles}>READ MORE</Link>
             </div>
           ))}
         </Transition>

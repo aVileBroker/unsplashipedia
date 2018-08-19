@@ -10,12 +10,14 @@ const Wrapper = styled.div`
   position: relative;
   font-family: Roboto Condensed, sans-serif;
   height: 100%;
+  overflow: hidden;
 `;
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.imageStore = [];
+    this.wrapper = null;
     this.state = {
       activeIndex: 0,
       interval: null,
@@ -67,19 +69,9 @@ class App extends Component {
         });
       });
 
-      console.log(this.state.photoData, this.imageStore);
+      console.log(this.state.photoData);
 
       this.resumeRotation();
-    });
-  }
-
-  prevArticle = () => {
-    this.setState((state) => {
-      return {
-        activeIndex: state.activeIndex - 1 === 0
-          ? state.photoData.length - 1
-          : state.activeIndex - 1,
-      }
     });
   }
 
@@ -121,19 +113,30 @@ class App extends Component {
   render() {
     const { activeIndex, photoData } = this.state;
 
-    return !!photoData ? (
-      <Wrapper>
-        <ImageContainer
-          photos={photoData}
-          activeIndex={activeIndex}
-        />
-        <ArticleList
-          setIndex={this.setIndex}
-          activeIndex={activeIndex}
-          data={photoData}
-        />
+    let currentPage;
+
+    if(!!photoData) {
+      currentPage = Math.floor((( (activeIndex + 1) * 304 ) + 32) / this.wrapper.clientWidth);
+      console.log(currentPage);
+    }
+
+    return (
+      <Wrapper innerRef={w => this.wrapper = w}>
+        {!!photoData && [
+          <ImageContainer
+            photos={photoData}
+            activeIndex={activeIndex}
+          />,
+          <ArticleList
+            setIndex={this.setIndex}
+            activeIndex={activeIndex}
+            windowWidth={this.wrapper.clientWidth}
+            page={currentPage}
+            data={photoData}
+          />,
+        ]}
       </Wrapper>
-    ) : (<Wrapper />);
+    );
   }
 }
 

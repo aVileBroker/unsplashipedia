@@ -12,6 +12,8 @@ const List = styled.div`
   bottom: 0;
   left: 0;
 
+  width: ${props => props.width}px;
+
   padding-left: 2rem;
 
   display: flex;
@@ -23,14 +25,20 @@ export const ArticleList = ({
   data,
   activeIndex=0,
   setIndex,
+  page,
+  windowWidth,
 }) => (
-  <List>
-    {map(data, ({ id, description, links, isActive }, index) => (
+  <List width={32+(304 * data.length)} page={page}>
+    {map(data, ({ id, description, links, location, isActive }, index) => (
       <ArticleCard
         key={id}
+        page={page}
+        windowWidth={windowWidth}
         text={description}
         linkUrl={links.html}
+        wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}
         isActive={index === activeIndex}
+        activeIndex={activeIndex}
         onClick={() => {setIndex(index)}}
       />
     ))}
