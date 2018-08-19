@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import map from 'lodash/map';
 import get from 'lodash/get';
 import { Spring, animated } from 'react-spring';
+import { connect } from 'react-redux';
 
 const Image = styled(animated.div)`
   background-image: url('${props => props.background}');
@@ -42,9 +43,9 @@ const Title = styled.div`
   left: 0;
 `;
 
-export const ImageContainer = ({ photos, activeIndex }) => map(photos, (p, i) => (
+const ImageContainer = ({ photoData, activeIndex }) => map(photoData, (p, i) => (
   <Spring
-    key={get(photos[i], 'id')}
+    key={get(photoData[i], 'id')}
     config={{
       duration: 1200,
       delay: 1200,
@@ -55,9 +56,11 @@ export const ImageContainer = ({ photos, activeIndex }) => map(photos, (p, i) =>
       zIndex: activeIndex === i ? 0 : -1,
     }}
     native
-  >{ styles => (<Image style={styles} color={get(photos[i], 'color')} background={get(photos[i], 'urls.full', '')}>
+  >{ styles => (<Image style={styles} color={get(photoData[i], 'color')} background={get(photoData[i], 'urls.full', '')}>
       <Gradient />
-      <Title>{get(photos[i], 'location.title')}</Title>
+      <Title>{get(photoData[i], 'location.title')}</Title>
     </Image>)
   }</Spring>
 ));
+
+export default connect()(ImageContainer);

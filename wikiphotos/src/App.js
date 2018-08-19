@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 import { ArticleList, ImageContainer } from './components/';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 
 import has from 'lodash/has';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
+
+import {
+  addPhoto,
+  addWikiEntry,
+  goToPhoto,
+  setWindowWidth,
+} from './actions';
 
 const Wrapper = styled.div`
   position: relative;
@@ -19,13 +27,14 @@ class App extends Component {
     this.imageStore = [];
     this.wrapper = null;
     this.state = {
-      activeIndex: 0,
       interval: null,
       afkTimer: null,
     };
   }
 
   componentDidMount() {
+    const { dispatch, photoData } = this.props;
+
     fetch('https://api.unsplash.com/photos/random?client_id=e2b41587283713a6edaa232ae6820afe8c9a6c0b6164c123df7582b1abcb565c&count=500')
     .then(response => {
       if (response.status >= 400) {
@@ -36,13 +45,12 @@ class App extends Component {
     .then(data => {
       const filteredData = filter(data, d => { return has(d, 'location.title'); });
 
-      this.setState({ photoData: filteredData });
-
       forEach(filteredData, (photo, index) => {
         // preload the image
         const preload = new Image();
         preload.src = photo.urls.full;
         this.imageStore.push(preload);
+        dispatch(addPhoto(photo));
 
         fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
           {
@@ -60,29 +68,21 @@ class App extends Component {
         })
         .then(data => {
           if(has(data, 'query.pages[0].revisions[0]')) {
-            this.setState((state) => {
-              let newPhotoData = state.photoData;
-              newPhotoData[index].wikipediaDescription = data.query.pages[0].revisions[0].content;
-              return { photoData: newPhotoData };
-            });
+            dispatch(addWikiEntry(data.query.pages[0].revisions[0].content, index));
           }
         });
       });
-
-      console.log(this.state.photoData);
 
       this.resumeRotation();
     });
   }
 
   nextArticle = () => {
-    this.setState((state) => {
-      return {
-        activeIndex: state.activeIndex + 1 === state.photoData.length
-          ? 0
-          : state.activeIndex+1,
-      }
-    });
+    const { dispatch, photoData = [], activeIndex } = this.props;
+
+    dispatch(goToPhoto(activeIndex + 1 === photoData.length
+      ? 0
+      : activeIndex+1));
   }
 
   pauseRotation = () => {
@@ -111,13 +111,12 @@ class App extends Component {
   }
 
   render() {
-    const { activeIndex, photoData } = this.state;
+    const { dispatch, activeIndex, photoData } = this.props;
 
-    let currentPage;
-
-    if(!!photoData) {
-      currentPage = Math.floor((( (activeIndex + 1) * 304 ) + 32) / this.wrapper.clientWidth);
-      console.log(currentPage);
+    if(photoData.length > 0) {
+      dispatch(setWindowWidth(
+        Math.floor((( (activeIndex + 1) * 304 ) + 32) / this.wrapper.clientWidth)
+      ));
     }
 
     return (
@@ -125,16 +124,9 @@ class App extends Component {
         {!!photoData && [
           <ImageContainer
             key="photo"
-            photos={photoData}
-            activeIndex={activeIndex}
           />,
           <ArticleList
             key="list"
-            setIndex={this.setIndex}
-            activeIndex={activeIndex}
-            windowWidth={this.wrapper.clientWidth}
-            page={currentPage}
-            data={photoData}
           />,
         ]}
       </Wrapper>
@@ -142,4 +134,12 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state, ownProps) => {
+  console.log(state);
+  return {
+    photoData: state.photos.photoData,
+    activeIndex: state.photos.activeIndex,
+  }
+};
+
+export default connect(mapStateToProps)(App);
