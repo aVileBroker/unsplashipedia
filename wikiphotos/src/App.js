@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { ArticleList, ImageContainer } from './components/';
 import styled from 'styled-components';
+
 import has from 'lodash/has';
+import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 
 const Wrapper = styled.div`
@@ -13,6 +15,7 @@ const Wrapper = styled.div`
 class App extends Component {
   constructor(props) {
     super(props);
+    this.imageStore = [];
     this.state = {
       activeIndex: 0,
       interval: null,
@@ -29,36 +32,42 @@ class App extends Component {
       return response.json();
     })
     .then(data => {
-      this.setState({ photoData: data });
+      const filteredData = filter(data, d => { return has(d, 'location'); });
 
-      forEach(data, (photo, index) => {
-        if(has(photo, 'location')) {
-          fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
-            {
-              method: 'POST',
-              headers: new Headers( {
-                  'Api-User-Agent': 'unsplashipedia/0.1 (https://vile.studio; oliver@oliverbaker.org)',
-                  'Content-Type': 'application/json; charset=UTF-8',
-              } )
-            })
-          .then(response => {
-            if (response.status >= 400) {
-              throw new Error("Bad response from server");
-            }
-            return response.json();
+      this.setState({ photoData: filteredData });
+
+      forEach(filteredData, (photo, index) => {
+        // preload the image
+        const preload = new Image();
+        preload.src = photo.urls.full;
+        this.imageStore.push(preload);
+
+        fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
+          {
+            method: 'POST',
+            headers: new Headers( {
+                'Api-User-Agent': 'unsplashipedia/0.1 (https://vile.studio; oliver@oliverbaker.org)',
+                'Content-Type': 'application/json; charset=UTF-8',
+            } )
           })
-          .then(data => {
-            if(has(data, 'query.pages[0].revisions[0]')) {
-              this.setState((state) => {
-                console.log(state);
-                let newPhotoData = state.photoData;
-                newPhotoData[index].wikipediaDescription = data.query.pages[0].revisions[0].content;
-                return { photoData: newPhotoData };
-              });
-            }
-          });
-        }
+        .then(response => {
+          if (response.status >= 400) {
+            throw new Error("Bad response from server");
+          }
+          return response.json();
+        })
+        .then(data => {
+          if(has(data, 'query.pages[0].revisions[0]')) {
+            this.setState((state) => {
+              let newPhotoData = state.photoData;
+              newPhotoData[index].wikipediaDescription = data.query.pages[0].revisions[0].content;
+              return { photoData: newPhotoData };
+            });
+          }
+        });
       });
+
+      console.log(this.state.photoData, this.imageStore);
 
       this.resumeRotation();
     });
