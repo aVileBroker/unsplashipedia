@@ -59,19 +59,20 @@ const ExpandCloseButton = styled(animated.a)`
   text-align: center;
 `;
 
-const PhotogInfo = styled.div`
+const PhotogInfo = styled.a`
   margin-top: 3rem;
   display: flex;
   justify-content: flex-start;
   flex-direction: row;
   align-items: center;
+  padding: .75rem 1rem;
+  color: #77f;
+  text-decoration: none;
   background-color: white;
   border-radius: .5rem;
   &:hover{
     background-color: #ddd;
   }
-
-  padding: 1rem;
 `;
 const ProfilePic = styled.div`
   background-image: url(${props => props.image});
@@ -152,7 +153,7 @@ export const ArticleCard = ({
           : '3rem',
       left: isOpen ? `${(windowWidth/2) || 0}px` : '0px',
       width: isOpen ? '608px' : '304px',
-      transform: isOpen ? 'translate(-304px, -64px)' : `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 48)}px, 0px)`,
+      transform: isOpen ? 'translate(-304px, -64px)' : `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 32)}px, 0px)`,
       expandRotation: `rotate(${isOpen ? '0' : '45' }deg)`,
     }}
     native

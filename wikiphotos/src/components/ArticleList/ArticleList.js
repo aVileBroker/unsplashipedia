@@ -31,7 +31,7 @@ export const ArticleList = ({
         index={index}
         dispatch={dispatch}
         title={location.title}
-        text={wikipediaDescription || description}
+        text={wikipediaDescription || description || 'Loading description from Wikipedia...'}
         isActive={activeIndex === index}
         isOpen={openIndex === index}
         openIndex={openIndex}
