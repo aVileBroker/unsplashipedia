@@ -1,12 +1,6 @@
-export const addPhoto = photoData => ({
-  type: 'ADD_PHOTO',
+export const setPhotos = photoData => ({
+  type: 'SET_PHOTOS',
   photoData,
-});
-
-export const addWikiEntry = (photoData, index) => ({
-  type: 'ADD_WIKI_ENTRY',
-  photoData,
-  index,
 });
 
 export const setWindowWidth = windowWidth => ({

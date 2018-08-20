@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
 
-import { connect } from 'react-redux'
 import { goToPhoto } from '../../actions'
 
 const Card = styled(animated.div)`
@@ -69,16 +68,13 @@ const Link = styled.a`
   }
 `;
 
-const ArticleCard = ({
+export const ArticleCard = ({
   text,
-  title,
   linkUrl,
   wikiUrl,
-  page = 0,
   activeIndex,
   index,
   isActive,
-  windowWidth,
   dispatch,
 }) => (
   <Spring
@@ -116,11 +112,3 @@ const ArticleCard = ({
     )}
   </Spring>
 );
-
-const mapStateToProps = (state, ownProps) => ({
-  isActive: state.activeIndex === ownProps.index,
-})
-
-export default connect(
-  mapStateToProps,
-)(ArticleCard);

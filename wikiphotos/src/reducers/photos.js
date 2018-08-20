@@ -1,8 +1,6 @@
-import map from 'lodash/map';
-
 const photos = (state = {
   photoData: [],
-  activeIndex: 0
+  activeIndex: 0,
 }, action) => {
   switch ( action.type ) {
     case 'SET_WINDOW_WIDTH':
@@ -11,23 +9,10 @@ const photos = (state = {
         windowWidth: action.windowWidth,
       }
 
-    case 'ADD_PHOTO':
+    case 'SET_PHOTOS':
       return {
         ...state,
-        photoData: [
-          ...state.photoData,
-          action.photoData,
-        ],
-      };
-
-    case 'ADD_WIKI_ENTRY':
-      return {
-        ...state,
-        photoData: map(state.photoData, (photo, i) => {
-          return action.index === i
-            ? { ...photo, wikipediaDescription: action.entry }
-            : photo;
-        }),
+        photoData: action.photoData,
       };
 
     case 'GO_TO_PHOTO':

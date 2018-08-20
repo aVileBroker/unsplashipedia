@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import map from 'lodash/map';
-import { connect } from 'react-redux';
 
 import { ArticleCard } from '../ArticleCard';
 
@@ -20,18 +19,18 @@ const List = styled.div`
   align-items: flex-end;
 `;
 
-const ArticleList = ({ photoData, page }) => (
-  <List page={page}>
-    {map(photoData, ({ id, description, links, location }, index) => (
+export const ArticleList = ({ photoData, activeIndex }) => (
+  <List>
+    {map(photoData, ({ id, description, links, location, wikipediaDescription }, index) => (
       <ArticleCard
         key={id}
         index={index}
-        text={description}
+        text={wikipediaDescription || description}
+        isActive={activeIndex === index}
+        activeIndex={activeIndex}
         linkUrl={links.html}
         wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}
       />
     ))}
   </List>
 );
-
-export default connect()(ArticleList);

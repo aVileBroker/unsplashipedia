@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { ArticleList, ImageContainer } from './components/';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
@@ -7,9 +6,11 @@ import has from 'lodash/has';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 
+import { ImageContainer } from './components/ImageContainer';
+import { ArticleList } from './components/ArticleList';
+
 import {
-  addPhoto,
-  addWikiEntry,
+  setPhotos,
   goToPhoto,
   setWindowWidth,
 } from './actions';
@@ -33,52 +34,54 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, photoData } = this.props;
+    const { dispatch } = this.props;
+    let filteredData;
 
     fetch('https://api.unsplash.com/photos/random?client_id=e2b41587283713a6edaa232ae6820afe8c9a6c0b6164c123df7582b1abcb565c&count=500')
-    .then(response => {
-      if (response.status >= 400) {
-        throw new Error("Bad response from server");
-      }
-      return response.json();
-    })
-    .then(data => {
-      const filteredData = filter(data, d => { return has(d, 'location.title'); });
+      .then(response => {
+        if (response.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        return response.json();
+      })
+      .then(data => {
+        filteredData = filter(data, d => { return has(d, 'location.title'); });
 
-      forEach(filteredData, (photo, index) => {
-        // preload the image
-        const preload = new Image();
-        preload.src = photo.urls.full;
-        this.imageStore.push(preload);
-        dispatch(addPhoto(photo));
+        forEach(filteredData, (photo, index) => {
+          // preload the image
+          const preload = new Image();
+          preload.src = photo.urls.full;
+          this.imageStore.push(preload);
 
-        fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
-          {
-            method: 'POST',
-            headers: new Headers( {
-                'Api-User-Agent': 'unsplashipedia/0.1 (https://vile.studio; oliver@oliverbaker.org)',
-                'Content-Type': 'application/json; charset=UTF-8',
-            } )
-          })
-        .then(response => {
-          if (response.status >= 400) {
-            throw new Error("Bad response from server");
-          }
-          return response.json();
-        })
-        .then(data => {
-          if(has(data, 'query.pages[0].revisions[0]')) {
-            dispatch(addWikiEntry(data.query.pages[0].revisions[0].content, index));
-          }
-        });
-      });
+          fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.title}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
+            {
+              method: 'POST',
+              headers: new Headers( {
+                  'Api-User-Agent': 'unsplashipedia/0.1 (https://vile.studio; oliver@oliverbaker.org)',
+                  'Content-Type': 'application/json; charset=UTF-8',
+              } )
+            })
+            .then(response => {
+              if (response.status >= 400) {
+                throw new Error("Bad response from server");
+              }
+              return response.json();
+            })
+            .then(wikiData => {
+              if(has(wikiData, 'query.pages[0].revisions[0]')) {
+                filteredData[index].wikipediaDescription = wikiData.query.pages[0].revisions[0].content;
+              } else { console.log(`wikipedia returned no data for ${photo.location.title}`); }
+            });
+          });
 
+      dispatch(setPhotos(filteredData));
+      dispatch(setWindowWidth(this.wrapper.clientWidth));
       this.resumeRotation();
     });
   }
 
   nextArticle = () => {
-    const { dispatch, photoData = [], activeIndex } = this.props;
+    const { dispatch, photoData = [], activeIndex = 0 } = this.props;
 
     dispatch(goToPhoto(activeIndex + 1 === photoData.length
       ? 0
@@ -102,31 +105,26 @@ class App extends Component {
   }
 
   resumeRotation = () => {
-    this.setState({ interval: window.setInterval(this.nextArticle, 3000)});
-  }
-
-  setIndex = (newIndex) => {
-    this.pauseRotation();
-    this.setState({ activeIndex: newIndex });
+    this.setState({ interval: window.setInterval(this.nextArticle, 3000) });
   }
 
   render() {
-    const { dispatch, activeIndex, photoData } = this.props;
+    const { photoData, activeIndex = 0 } = this.props;
 
-    if(photoData.length > 0) {
-      dispatch(setWindowWidth(
-        Math.floor((( (activeIndex + 1) * 304 ) + 32) / this.wrapper.clientWidth)
-      ));
-    }
+    console.log(this.props);
 
     return (
       <Wrapper innerRef={w => this.wrapper = w}>
-        {!!photoData && [
+        {(!!photoData && photoData.length > 0) && [
           <ImageContainer
             key="photo"
+            photoData={photoData}
+            activeIndex={activeIndex}
           />,
           <ArticleList
             key="list"
+            photoData={photoData}
+            activeIndex={activeIndex}
           />,
         ]}
       </Wrapper>
@@ -134,11 +132,10 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  console.log(state);
+const mapStateToProps = (state) => {
   return {
-    photoData: state.photos.photoData,
-    activeIndex: state.photos.activeIndex,
+    photoData: state.photoData,
+    activeIndex: state.activeIndex,
   }
 };
 
