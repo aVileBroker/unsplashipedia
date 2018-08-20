@@ -32,6 +32,7 @@ export const ArticleList = ({
         key={id}
         index={index}
         dispatch={dispatch}
+        title={location.title}
         text={wikipediaDescription || description}
         isActive={activeIndex === index}
         activeIndex={activeIndex}

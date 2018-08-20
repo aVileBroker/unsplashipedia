@@ -29,6 +29,12 @@ const CardContent = styled.div`
   line-height: 1.1;
 `;
 
+const CardTitle = styled.div`
+  font-size: 1.2rem;
+  color: black;
+  margin-bottom: .5rem;
+`;
+
 const LinkContainer = styled(animated.div)`
   width: 100%;
   height: 8rem;
@@ -61,6 +67,7 @@ const Link = styled.a`
 
 export const ArticleCard = ({
   text,
+  title,
   linkUrl,
   wikiUrl,
   activeIndex,
@@ -91,7 +98,7 @@ export const ArticleCard = ({
         }}
         style={styles}
       >
-        <CardContent>{text}</CardContent>
+        <CardContent><CardTitle>{title}</CardTitle>{text}</CardContent>
         <Transition
           from={{ transform: 'translateY(12rem)' }}
           enter={{ transform: 'translateY(0rem)' }}
