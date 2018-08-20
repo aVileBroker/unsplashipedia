@@ -15,7 +15,7 @@ const photos = (state, action) => {
 
       return {
         ...state,
-        windowWidth: action.windowWidth,
+        windowWidth: action.windowWidth || state.windowWidth,
         articlesPerPage,
         page: Math.floor(state.activeIndex / articlesPerPage) || 0,
       }

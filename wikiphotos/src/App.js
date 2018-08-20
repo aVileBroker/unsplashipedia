@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import wtf from 'wtf_wikipedia';
 
+import get from 'lodash/get';
 import has from 'lodash/has';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
@@ -31,7 +32,7 @@ class App extends Component {
     this.imageStore = [];
     this.wrapper = null;
 
-    window.onresize = () => props.dispatch(setWindowWidth(this.wrapper.clientWidth));
+    window.onresize = () => props.dispatch(setWindowWidth(get(this.wrapper, 'clientWidth', this.props.clientWidth)));
     props.dispatch(initState());
 
     this.state = {
@@ -62,12 +63,12 @@ class App extends Component {
           const preload = new Image();
           preload.src = photo.urls.full;
           this.imageStore.push(preload);
-/*
+
           fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
             {
               method: 'POST',
               headers: new Headers( {
-                  'Api-User-Agent': 'unsplashipedia/0.1 (https://vile.studio; oliver@oliverbaker.org)',
+                  'Api-User-Agent': 'unsplashipedia/0.2 (vile@vile.studio)',
                   'Content-Type': 'application/json; charset=UTF-8',
               } )
             })
@@ -81,12 +82,11 @@ class App extends Component {
             .then(wikiData => {
               if(has(wikiData, 'query.pages[0].revisions[0].content')) {
                 const text = wtf(wikiData.query.pages[0].revisions[0].content).text();
-                filteredData[index].wikipediaDescription = text.substring(0, 500).includes('may refer to') ? undefined : text;
+                filteredData[index].wikipediaDescription = text.substring(0, 500).includes('may refer to') ? undefined : text.substring(0, 1000)+'...';
 
                 dispatch(setPhotos(filteredData));
               } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
-*/
           });
       dispatch(setWindowWidth(this.wrapper.clientWidth));
     });

@@ -25,7 +25,7 @@ export const ArticleList = ({
   dispatch
 }) => (
   <List>
-    {map(photoData, ({ id, description, links, location, wikipediaDescription }, index) => (
+    {map(photoData, ({ id, description, links, location, wikipediaDescription, user }, index) => (
       <ArticleCard
         key={id}
         index={index}
@@ -38,9 +38,13 @@ export const ArticleList = ({
         activeIndex={activeIndex}
         page={page}
         windowWidth={windowWidth}
+
         articlesPerPage={articlesPerPage}
         linkUrl={links.html}
         wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}
+        photogAvatar={user.profile_image.medium}
+        photogName={user.name}
+        photogLink={user.links.html}
       />
     ))}
   </List>

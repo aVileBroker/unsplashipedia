@@ -12,7 +12,6 @@ const Card = styled(animated.div)`
   position:absolute;
   left: 0%;
   bottom: .25rem;
-  z-index: ${props => props.isOpen ? 1 : 0};
 
   cursor: pointer;
 
@@ -23,7 +22,7 @@ const Card = styled(animated.div)`
   flex: 0 0 16rem;
   flex-direction: column;
   align-items: flex-end;
-  overflow: hidden;
+  overflow: ${props => props.isOpen ? 'auto' : 'hidden'};
 `;
 
 const CardContent = styled.div`
@@ -60,9 +59,31 @@ const ExpandCloseButton = styled(animated.a)`
   text-align: center;
 `;
 
+const PhotogInfo = styled.div`
+  margin-top: 3rem;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+  background-color: white;
+  border-radius: .5rem;
+  &:hover{
+    background-color: #ddd;
+  }
+
+  padding: 1rem;
+`;
+const ProfilePic = styled.div`
+  background-image: url(${props => props.image});
+  margin-right: 1rem;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+`;
+
 const LinkContainer = styled(animated.div)`
   width: 100%;
-  height: 8rem;
+  height: ${props => props.isOpen ? '3rem' : '8rem'};
   position: absolute;
   bottom: .75rem;
   left: 0;
@@ -95,6 +116,9 @@ export const ArticleCard = ({
   title,
   linkUrl,
   wikiUrl,
+  photogName,
+  photogAvatar,
+  photogLink,
   activeIndex,
   page,
   windowWidth,
@@ -116,9 +140,11 @@ export const ArticleCard = ({
       left: '0px',
       transform: 'translate(0px, 0px)',
       expandRotation: 'rotate(45deg)',
+      zIndex: 0,
     }}
     to={{
       opacity: (openIndex !== null && !isOpen) ? .3 : 1,
+      zIndex: isOpen ? 1 : 0,
       height: isOpen
         ? '25rem'
         : isActive
@@ -126,7 +152,7 @@ export const ArticleCard = ({
           : '3rem',
       left: isOpen ? `${(windowWidth/2) || 0}px` : '0px',
       width: isOpen ? '608px' : '304px',
-      transform: isOpen ? 'translate(-304px, -64px)' : `translate(${(((index * 384) + (-1 * page * articlesPerPage * 336)) + 48)}px, 0px)`,
+      transform: isOpen ? 'translate(-304px, -64px)' : `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 48)}px, 0px)`,
       expandRotation: `rotate(${isOpen ? '0' : '45' }deg)`,
     }}
     native
@@ -141,6 +167,7 @@ export const ArticleCard = ({
           transform: styles.transform,
           left: styles.left,
           width: styles.width,
+          zIndex: styles.zIndex,
         }}
       >
         {isActive &&
@@ -151,7 +178,7 @@ export const ArticleCard = ({
             &times;
           </ExpandCloseButton>
         }
-        <CardContent><CardTitle>{title}</CardTitle>{text}</CardContent>
+        <CardContent><CardTitle>{title}</CardTitle>{text}<PhotogInfo href={photogLink}><ProfilePic image={photogAvatar} />{photogName}</PhotogInfo></CardContent>
         <Transition
           from={{ transform: 'translateY(12rem)' }}
           enter={{ transform: 'translateY(0rem)' }}
@@ -159,7 +186,7 @@ export const ArticleCard = ({
           native
         >
           {isActive && ( styles => (
-            <LinkContainer style={styles}>
+            <LinkContainer style={styles} isOpen={isOpen}>
               <Link side="left" href={linkUrl}>VIEW PHOTO</Link>
               <Link side="right" href={wikiUrl}>READ MORE</Link>
             </LinkContainer>
