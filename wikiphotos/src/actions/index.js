@@ -21,8 +21,16 @@ export const resume = () => ({
   type: 'RESUME',
 });
 
-export const goToPhoto = (index, source) => ({
+export const expandDetails = index => ({
+  type: 'EXPAND_DETAILS',
+  index,
+});
+
+export const closeDetails = () => ({
+  type: 'CLOSE_DETAILS',
+});
+
+export const goToPhoto = index => ({
   type: 'GO_TO_PHOTO',
   index,
-  source,
 });

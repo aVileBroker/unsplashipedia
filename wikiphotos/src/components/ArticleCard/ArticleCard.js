@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
 
-import { pauseOn } from '../../actions'
+import { closeDetails, expandDetails, pauseOn } from '../../actions'
 
 const Card = styled(animated.div)`
   background-color: white;
@@ -33,6 +33,27 @@ const CardTitle = styled.div`
   font-size: 1.2rem;
   color: black;
   margin-bottom: .5rem;
+  margin-right: 1rem;
+`;
+
+const ExpandCloseButton = styled(animated.a)`
+  position:absolute;
+  top: .5rem;
+  right: .75rem;
+  padding: .5rem;
+  width: 1rem;
+  height: 1rem;
+  font-size: 1.2rem;
+  font-family: Roboto;
+
+  background-color: white;
+  border-radius: 50%;
+  &:hover{
+    background-color: #ddd;
+  }
+
+  line-height: 1;
+  text-align: center;
 `;
 
 const LinkContainer = styled(animated.div)`
@@ -61,7 +82,7 @@ const Link = styled.a`
   background-color: white;
   border-radius: .5rem;
   &:hover{
-    background-color: #eee;
+    background-color: #ddd;
   }
 `;
 
@@ -75,6 +96,7 @@ export const ArticleCard = ({
   articlesPerPage,
   index,
   isActive,
+  isOpen,
   dispatch,
 }) => (
   <Spring
@@ -84,20 +106,35 @@ export const ArticleCard = ({
     from={{
       height: '3rem',
       transform: 'translateX(0px)',
+      expandRotation: 'rotate(45deg)',
     }}
     to={{
-      height: isActive ? '16rem' : '3rem',
+      height: isOpen
+        ? '25rem'
+        : isActive
+          ? '16rem'
+          : '3rem',
       transform: `translateX(${(-1 * ((page * articlesPerPage * 336)) + 48)}px)`,
+      expandRotation: `rotate(${isOpen ? '0' : '45' }deg)`,
     }}
     native
   >
     {styles => (
       <Card
-        onClick={() => {
-          dispatch(pauseOn(index));
+        onClick={() => { dispatch(pauseOn(index)) }}
+        style={{
+          height: styles.height,
+          transform: styles.transform,
         }}
-        style={styles}
       >
+        {isActive &&
+          <ExpandCloseButton
+            style={{ transform: styles.expandRotation }}
+            onClick={(e) => {e.stopPropagation(); dispatch(isOpen ? closeDetails() : expandDetails(index))}}
+          >
+            &times;
+          </ExpandCloseButton>
+        }
         <CardContent><CardTitle>{title}</CardTitle>{text}</CardContent>
         <Transition
           from={{ transform: 'translateY(12rem)' }}

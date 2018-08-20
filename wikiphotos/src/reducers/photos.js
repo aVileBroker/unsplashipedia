@@ -6,6 +6,7 @@ const photos = (state, action) => {
         page: 0,
         articlesPerPage: 3,
         activeIndex: -1,
+        openIndex: null,
         pausedOn: null,
       };
 
@@ -30,6 +31,19 @@ const photos = (state, action) => {
         ...state,
         activeIndex: action.index,
         page: Math.floor(action.index / state.articlesPerPage),
+        openIndex: null,
+      }
+
+    case 'EXPAND_DETAILS':
+      return {
+        ...state,
+        openIndex: action.index,
+      }
+
+    case 'CLOSE_DETAILS':
+      return {
+        ...state,
+        openIndex: -1,
       }
 
     case 'RESUME':
@@ -43,6 +57,7 @@ const photos = (state, action) => {
         ...state,
         pausedOn: action.index,
         activeIndex: action.index,
+        openIndex: null,
         page: Math.floor(action.index / state.articlesPerPage),
       }
 

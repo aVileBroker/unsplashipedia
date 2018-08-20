@@ -22,6 +22,7 @@ const List = styled.div`
 export const ArticleList = ({
   photoData,
   activeIndex,
+  openIndex,
   page,
   articlesPerPage,
   dispatch
@@ -35,6 +36,7 @@ export const ArticleList = ({
         title={location.title}
         text={wikipediaDescription || description}
         isActive={activeIndex === index}
+        isOpen={openIndex === index}
         activeIndex={activeIndex}
         page={page}
         articlesPerPage={articlesPerPage}

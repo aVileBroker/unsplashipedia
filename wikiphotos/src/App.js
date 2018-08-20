@@ -47,7 +47,8 @@ class App extends Component {
     fetch('https://api.unsplash.com/photos/random?client_id=e2b41587283713a6edaa232ae6820afe8c9a6c0b6164c123df7582b1abcb565c&count=500')
       .then(response => {
         if (response.status >= 400) {
-          throw new Error(`Unsplash Server ${response.status} Error`);
+          console.log(`Unsplash Server ${response.status} Error`);
+          return null;
         }
         return response.json();
       })
@@ -61,7 +62,7 @@ class App extends Component {
           const preload = new Image();
           preload.src = photo.urls.full;
           this.imageStore.push(preload);
-
+/*
           fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
             {
               method: 'POST',
@@ -72,7 +73,8 @@ class App extends Component {
             })
             .then(response => {
               if (response.status >= 400) {
-                throw new Error(`Wikipedia Server ${response.status} Error`);
+                console.log(`Wikipedia Server ${response.status} Error`);
+                return null;
               }
               return response.json();
             })
@@ -84,8 +86,8 @@ class App extends Component {
                 dispatch(setPhotos(filteredData));
               } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
+*/
           });
-
       dispatch(setWindowWidth(this.wrapper.clientWidth));
     });
   }
@@ -93,9 +95,18 @@ class App extends Component {
   componentDidUpdate(prevProps) {
     if(this.props.pausedOn !== prevProps.pausedOn) {
       if(this.props.pausedOn !== null) {
+
         this.pauseRotation();
+        this.setState({ readingTimer: window.setTimeout(() => this.props.dispatch(resume()), 10000) });
+
       } else {
         this.resumeRotation();
+      }
+    }
+
+    if(this.props.openIndex !== prevProps.openIndex) {
+      if( this.props.openIndex !== -1 ) {
+        this.pauseRotation();
       }
     }
   }
@@ -118,12 +129,10 @@ class App extends Component {
       this.setState({ interval: null });
     }
 
-    // restart the timer to 6 seconds
+    // restart the timer to 10 seconds
     if(readingTimer) {
       window.clearTimeout(readingTimer)
     }
-
-    this.setState({ readingTimer: window.setTimeout(() => dispatch(resume()), 10000) });
   }
 
   resumeRotation = () => {
@@ -135,6 +144,7 @@ class App extends Component {
     const {
       photoData,
       activeIndex = 0,
+      openIndex = 0,
       page = 0,
       articlesPerPage = 0,
       dispatch,
@@ -155,6 +165,7 @@ class App extends Component {
             articlesPerPage={articlesPerPage}
             photoData={photoData}
             activeIndex={activeIndex}
+            openIndex={openIndex}
           />,
         ]}
       </Wrapper>
@@ -166,6 +177,7 @@ const mapStateToProps = (state) => {
   return {
     photoData: state.photoData,
     activeIndex: state.activeIndex,
+    openIndex: state.openIndex,
     pausedOn: state.pausedOn,
     page: state.page,
     articlesPerPage: state.articlesPerPage,
