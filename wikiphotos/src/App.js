@@ -92,7 +92,11 @@ class App extends Component {
 
   componentDidUpdate(prevProps) {
     if(this.props.pausedOn !== prevProps.pausedOn) {
-      this.pauseRotation();
+      if(this.props.pausedOn !== null) {
+        this.pauseRotation();
+      } else {
+        this.resumeRotation();
+      }
     }
   }
 
@@ -105,6 +109,7 @@ class App extends Component {
   }
 
   pauseRotation = () => {
+    const { dispatch } = this.props;
     const { interval, readingTimer } = this.state;
 
     // stop it from rotating further
@@ -117,13 +122,13 @@ class App extends Component {
     if(readingTimer) {
       window.clearTimeout(readingTimer)
     }
-    this.setState({ readingTimer: window.setTimeout(this.resumeRotation, 6000) });
+
+    this.setState({ readingTimer: window.setTimeout(() => dispatch(resume()), 10000) });
   }
 
   resumeRotation = () => {
-    const { dispatch } = this.props;
-    dispatch(resume());
     this.setState({ interval: window.setInterval(this.nextArticle, 6000) });
+    this.nextArticle();
   }
 
   render() {
