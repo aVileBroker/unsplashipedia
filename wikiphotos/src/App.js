@@ -9,8 +9,7 @@ import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import throttle from 'lodash/throttle';
 
-import { ImageContainer } from './components/ImageContainer';
-import { ArticleList } from './components/ArticleList';
+import { ArticleList, ImageContainer } from './components';
 
 import {
   initState,
