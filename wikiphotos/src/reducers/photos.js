@@ -1,12 +1,22 @@
-const photos = (state = {
-  photoData: [],
-  activeIndex: 0,
-}, action) => {
+const photos = (state, action) => {
   switch ( action.type ) {
+    case 'INIT_STATE':
+      return {
+        photoData: [],
+        page: 0,
+        articlesPerPage: 3,
+        activeIndex: 0,
+        pausedOn: null,
+      };
+
     case 'SET_WINDOW_WIDTH':
+      const articlesPerPage =  Math.floor((action.windowWidth - 48) / 336);
+
       return {
         ...state,
         windowWidth: action.windowWidth,
+        articlesPerPage,
+        page: Math.floor(state.activeIndex / articlesPerPage) || 0,
       }
 
     case 'SET_PHOTOS':
@@ -19,6 +29,21 @@ const photos = (state = {
       return {
         ...state,
         activeIndex: action.index,
+        page: Math.floor(action.index / state.articlesPerPage),
+      }
+
+    case 'RESUME':
+      return {
+        ...state,
+        pausedOn: null,
+      }
+
+    case 'PAUSE_ON':
+      return {
+        ...state,
+        pausedOn: action.index,
+        activeIndex: action.index,
+        page: Math.floor(action.index / state.articlesPerPage),
       }
 
     default:

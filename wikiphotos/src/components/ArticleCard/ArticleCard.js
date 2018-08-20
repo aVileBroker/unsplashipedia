@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
 
-import { goToPhoto } from '../../actions'
+import { pauseOn } from '../../actions'
 
 const Card = styled(animated.div)`
   background-color: white;
@@ -64,6 +64,8 @@ export const ArticleCard = ({
   linkUrl,
   wikiUrl,
   activeIndex,
+  page,
+  articlesPerPage,
   index,
   isActive,
   dispatch,
@@ -78,12 +80,17 @@ export const ArticleCard = ({
     }}
     to={{
       height: isActive ? '16rem' : '3rem',
-      transform: `translateX(${(-1 * (activeIndex * 336)) + 48}px)`,
+      transform: `translateX(${(-1 * ((page * articlesPerPage * 336)) + 48)}px)`,
     }}
     native
   >
     {styles => (
-      <Card onClick={() => { dispatch(goToPhoto(index)) }} style={styles}>
+      <Card
+        onClick={() => {
+          dispatch(pauseOn(index));
+        }}
+        style={styles}
+      >
         <CardContent>{text}</CardContent>
         <Transition
           from={{ transform: 'translateY(12rem)' }}
