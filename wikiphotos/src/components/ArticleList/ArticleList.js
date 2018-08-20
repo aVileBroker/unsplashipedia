@@ -19,12 +19,13 @@ const List = styled.div`
   align-items: flex-end;
 `;
 
-export const ArticleList = ({ photoData, activeIndex }) => (
+export const ArticleList = ({ photoData, activeIndex, dispatch }) => (
   <List>
     {map(photoData, ({ id, description, links, location, wikipediaDescription }, index) => (
       <ArticleCard
         key={id}
         index={index}
+        dispatch={dispatch}
         text={wikipediaDescription || description}
         isActive={activeIndex === index}
         activeIndex={activeIndex}

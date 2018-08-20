@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import wtf from 'wtf_wikipedia';
 
 import has from 'lodash/has';
 import filter from 'lodash/filter';
@@ -45,7 +46,7 @@ class App extends Component {
         return response.json();
       })
       .then(data => {
-        filteredData = filter(data, d => { return has(d, 'location.title'); });
+        filteredData = filter(data, d => { return has(d, 'location.name'); });
 
         forEach(filteredData, (photo, index) => {
           // preload the image
@@ -53,7 +54,7 @@ class App extends Component {
           preload.src = photo.urls.full;
           this.imageStore.push(preload);
 
-          fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.title}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
+          fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
             {
               method: 'POST',
               headers: new Headers( {
@@ -69,8 +70,9 @@ class App extends Component {
             })
             .then(wikiData => {
               if(has(wikiData, 'query.pages[0].revisions[0]')) {
-                filteredData[index].wikipediaDescription = wikiData.query.pages[0].revisions[0].content;
-              } else { console.log(`No Wikipedia page found for ${photo.location.title}`); }
+                const text = wtf(wikiData.query.pages[0].revisions[0].content).text();
+                filteredData[index].wikipediaDescription = text.subString(0, 100).includes('may refer to') ? '' : text;
+              } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
           });
 
@@ -109,9 +111,7 @@ class App extends Component {
   }
 
   render() {
-    const { photoData, activeIndex = 0 } = this.props;
-
-    console.log(this.props);
+    const { photoData, activeIndex = 0, dispatch } = this.props;
 
     return (
       <Wrapper innerRef={w => this.wrapper = w}>
@@ -123,6 +123,7 @@ class App extends Component {
           />,
           <ArticleList
             key="list"
+            dispatch={dispatch}
             photoData={photoData}
             activeIndex={activeIndex}
           />,
