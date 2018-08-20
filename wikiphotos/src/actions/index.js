@@ -2,9 +2,9 @@ export const initState = photoData => ({
   type: 'INIT_STATE',
 });
 
-export const setWindowWidth = windowWidth => ({
-  type: 'SET_WINDOW_WIDTH',
-  windowWidth,
+export const setClientDimensions = clientDimensions => ({
+  type: 'SET_CLIENT_DIMENSIONS',
+  clientDimensions,
 });
 
 export const setPhotos = photoData => ({

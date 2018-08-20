@@ -20,7 +20,7 @@ export const ArticleList = ({
   activeIndex,
   openIndex,
   page,
-  windowWidth,
+  clientDimensions,
   articlesPerPage,
   dispatch
 }) => (
@@ -37,7 +37,7 @@ export const ArticleList = ({
         openIndex={openIndex}
         activeIndex={activeIndex}
         page={page}
-        windowWidth={windowWidth}
+        clientDimensions={clientDimensions}
 
         articlesPerPage={articlesPerPage}
         linkUrl={links.html}

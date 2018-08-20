@@ -22,7 +22,6 @@ const Card = styled(animated.div)`
   flex: 0 0 16rem;
   flex-direction: column;
   align-items: flex-end;
-  overflow: ${props => props.isOpen ? 'auto' : 'hidden'};
 `;
 
 const CardContent = styled.div`
@@ -122,7 +121,7 @@ export const ArticleCard = ({
   photogLink,
   activeIndex,
   page,
-  windowWidth,
+  clientDimensions,
   articlesPerPage,
   index,
   isActive,
@@ -136,7 +135,7 @@ export const ArticleCard = ({
     }}
     from={{
       opacity: 1,
-      height: '3rem',
+      height: '96px',
       width: '304px',
       left: '0px',
       transform: 'translate(0px, 0px)',
@@ -147,13 +146,13 @@ export const ArticleCard = ({
       opacity: (openIndex !== null && !isOpen) ? .3 : 1,
       zIndex: isOpen ? 1 : 0,
       height: isOpen
-        ? '25rem'
+        ? `${clientDimensions.height - 240}px`
         : isActive
-          ? '16rem'
-          : '3rem',
-      left: isOpen ? `${(windowWidth/2) || 0}px` : '0px',
-      width: isOpen ? '608px' : '304px',
-      transform: isOpen ? 'translate(-304px, -64px)' : `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 32)}px, 0px)`,
+          ? '304px'
+          : '96px',
+      left: isOpen ? `${(clientDimensions.width/2) - 32 || -32}px` : '0px',
+      width: isOpen ? `${Math.min(((clientDimensions.width - 32) * .9), 608)}px` : '304px',
+      transform: isOpen ? `translate(-${Math.min(clientDimensions.width*.45, 304)}px, -64px)` : `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 32)}px, 0px)`,
       expandRotation: `rotate(${isOpen ? '0' : '45' }deg)`,
     }}
     native
@@ -161,7 +160,6 @@ export const ArticleCard = ({
     {styles => (
       <Card
         onClick={() => { dispatch(pauseOn(index)) }}
-        isOpen={isOpen}
         style={{
           opacity: styles.opacity,
           height: styles.height,

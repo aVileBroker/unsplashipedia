@@ -10,12 +10,12 @@ const photos = (state, action) => {
         pausedOn: null,
       };
 
-    case 'SET_WINDOW_WIDTH':
-      const articlesPerPage =  Math.floor((action.windowWidth - 48) / 336);
+    case 'SET_CLIENT_DIMENSIONS':
+      const articlesPerPage =  Math.floor((action.clientDimensions.width - 48) / 336);
 
       return {
         ...state,
-        windowWidth: action.windowWidth || state.windowWidth,
+        clientDimensions: action.clientDimensions || state.clientDimensions,
         articlesPerPage,
         page: Math.floor(state.activeIndex / articlesPerPage) || 0,
       }

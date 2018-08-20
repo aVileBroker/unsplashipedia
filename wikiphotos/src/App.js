@@ -15,7 +15,7 @@ import {
   initState,
   setPhotos,
   goToPhoto,
-  setWindowWidth,
+  setClientDimensions,
   resume,
 } from './actions';
 
@@ -32,7 +32,11 @@ class App extends Component {
     this.imageStore = [];
     this.wrapper = null;
 
-    window.onresize = throttle(() => props.dispatch(setWindowWidth(get(this.wrapper, 'clientWidth', this.props.clientWidth))), 100);
+    window.onresize = throttle(() => props.dispatch(setClientDimensions({
+      width: get(this.wrapper, 'clientWidth', this.props.clientDimensions.width),
+      height: get(this.wrapper, 'clientHeight', this.props.clientDimensions.height),
+    })), 200);
+    
     props.dispatch(initState());
 
     this.state = {
@@ -88,7 +92,10 @@ class App extends Component {
               } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
           });
-      dispatch(setWindowWidth(this.wrapper.clientWidth));
+      dispatch(setClientDimensions({
+        width: this.wrapper.clientWidth,
+        height: this.wrapper.clientHeight,
+      }));
     });
   }
 
@@ -145,7 +152,7 @@ class App extends Component {
       activeIndex = 0,
       openIndex = -1,
       page = 0,
-      windowWidth,
+      clientDimensions,
       articlesPerPage = 0,
       dispatch,
     } = this.props;
@@ -164,7 +171,7 @@ class App extends Component {
             page={page}
             articlesPerPage={articlesPerPage}
             photoData={photoData}
-            windowWidth={windowWidth}
+            clientDimensions={clientDimensions}
             activeIndex={activeIndex}
             openIndex={openIndex}
           />,
@@ -182,7 +189,7 @@ const mapStateToProps = (state) => {
     pausedOn: state.pausedOn,
     page: state.page,
     articlesPerPage: state.articlesPerPage,
-    windowWidth: state.windowWidth,
+    clientDimensions: state.clientDimensions,
   }
 };
 
