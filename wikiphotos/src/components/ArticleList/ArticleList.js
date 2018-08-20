@@ -13,33 +13,38 @@ const List = styled.div`
   left: 0;
 
   width: 100%;
-
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
 `;
 
 export const ArticleList = ({
   photoData,
   activeIndex,
+  openIndex,
   page,
+  windowWidth,
   articlesPerPage,
   dispatch
 }) => (
   <List>
-    {map(photoData, ({ id, description, links, location, wikipediaDescription }, index) => (
+    {map(photoData, ({ id, description, links, location, wikipediaDescription, user }, index) => (
       <ArticleCard
         key={id}
         index={index}
         dispatch={dispatch}
         title={location.title}
-        text={wikipediaDescription || description}
+        text={wikipediaDescription || description || 'Loading description from Wikipedia...'}
         isActive={activeIndex === index}
+        isOpen={openIndex === index}
+        openIndex={openIndex}
         activeIndex={activeIndex}
         page={page}
+        windowWidth={windowWidth}
+
         articlesPerPage={articlesPerPage}
         linkUrl={links.html}
         wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}
+        photogAvatar={user.profile_image.medium}
+        photogName={user.name}
+        photogLink={user.links.html}
       />
     ))}
   </List>

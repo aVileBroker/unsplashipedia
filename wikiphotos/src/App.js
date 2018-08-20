@@ -3,9 +3,11 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import wtf from 'wtf_wikipedia';
 
+import get from 'lodash/get';
 import has from 'lodash/has';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
+import throttle from 'lodash/throttle';
 
 import { ImageContainer } from './components/ImageContainer';
 import { ArticleList } from './components/ArticleList';
@@ -31,7 +33,7 @@ class App extends Component {
     this.imageStore = [];
     this.wrapper = null;
 
-    window.onresize = () => props.dispatch(setWindowWidth(this.wrapper.clientWidth));
+    window.onresize = throttle(() => props.dispatch(setWindowWidth(get(this.wrapper, 'clientWidth', this.props.clientWidth))), 100);
     props.dispatch(initState());
 
     this.state = {
@@ -47,7 +49,8 @@ class App extends Component {
     fetch('https://api.unsplash.com/photos/random?client_id=e2b41587283713a6edaa232ae6820afe8c9a6c0b6164c123df7582b1abcb565c&count=500')
       .then(response => {
         if (response.status >= 400) {
-          throw new Error(`Unsplash Server ${response.status} Error`);
+          console.log(`Unsplash Server ${response.status} Error`);
+          return null;
         }
         return response.json();
       })
@@ -66,26 +69,26 @@ class App extends Component {
             {
               method: 'POST',
               headers: new Headers( {
-                  'Api-User-Agent': 'unsplashipedia/0.1 (https://vile.studio; oliver@oliverbaker.org)',
+                  'Api-User-Agent': 'unsplashipedia/0.2 (vile@vile.studio)',
                   'Content-Type': 'application/json; charset=UTF-8',
               } )
             })
             .then(response => {
               if (response.status >= 400) {
-                throw new Error(`Wikipedia Server ${response.status} Error`);
+                console.log(`Wikipedia Server ${response.status} Error`);
+                return null;
               }
               return response.json();
             })
             .then(wikiData => {
               if(has(wikiData, 'query.pages[0].revisions[0].content')) {
                 const text = wtf(wikiData.query.pages[0].revisions[0].content).text();
-                filteredData[index].wikipediaDescription = text.substring(0, 500).includes('may refer to') ? undefined : text;
+                filteredData[index].wikipediaDescription = text.substring(0, 500).includes('may refer to') ? undefined : text.substring(0, 1000)+'...';
 
                 dispatch(setPhotos(filteredData));
               } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
           });
-
       dispatch(setWindowWidth(this.wrapper.clientWidth));
     });
   }
@@ -93,9 +96,18 @@ class App extends Component {
   componentDidUpdate(prevProps) {
     if(this.props.pausedOn !== prevProps.pausedOn) {
       if(this.props.pausedOn !== null) {
+
         this.pauseRotation();
+        this.setState({ readingTimer: window.setTimeout(() => this.props.dispatch(resume()), 10000) });
+
       } else {
         this.resumeRotation();
+      }
+    }
+
+    if(this.props.openIndex !== prevProps.openIndex) {
+      if( this.props.openIndex !== -1 ) {
+        this.pauseRotation();
       }
     }
   }
@@ -109,7 +121,6 @@ class App extends Component {
   }
 
   pauseRotation = () => {
-    const { dispatch } = this.props;
     const { interval, readingTimer } = this.state;
 
     // stop it from rotating further
@@ -118,12 +129,10 @@ class App extends Component {
       this.setState({ interval: null });
     }
 
-    // restart the timer to 6 seconds
+    // restart the timer to 10 seconds
     if(readingTimer) {
       window.clearTimeout(readingTimer)
     }
-
-    this.setState({ readingTimer: window.setTimeout(() => dispatch(resume()), 10000) });
   }
 
   resumeRotation = () => {
@@ -135,7 +144,9 @@ class App extends Component {
     const {
       photoData,
       activeIndex = 0,
+      openIndex = -1,
       page = 0,
+      windowWidth,
       articlesPerPage = 0,
       dispatch,
     } = this.props;
@@ -154,7 +165,9 @@ class App extends Component {
             page={page}
             articlesPerPage={articlesPerPage}
             photoData={photoData}
+            windowWidth={windowWidth}
             activeIndex={activeIndex}
+            openIndex={openIndex}
           />,
         ]}
       </Wrapper>
@@ -166,9 +179,11 @@ const mapStateToProps = (state) => {
   return {
     photoData: state.photoData,
     activeIndex: state.activeIndex,
+    openIndex: state.openIndex,
     pausedOn: state.pausedOn,
     page: state.page,
     articlesPerPage: state.articlesPerPage,
+    windowWidth: state.windowWidth,
   }
 };
 
