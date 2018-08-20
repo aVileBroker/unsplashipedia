@@ -4,6 +4,7 @@ import map from 'lodash/map';
 import get from 'lodash/get';
 import { Spring, animated } from 'react-spring';
 
+
 const Image = styled(animated.div)`
   background-image: url('${props => props.background}');
   background-position: center;
@@ -42,22 +43,22 @@ const Title = styled.div`
   left: 0;
 `;
 
-export const ImageContainer = ({ photos, activeIndex }) => map(photos, (p, i) => (
-  <Spring
-    key={get(photos[i], 'id')}
-    config={{
-      duration: 1200,
-      delay: 1200,
-    }}
-    from={{ opacity: 0, zIndex: -1 }}
-    to={{
-      opacity: activeIndex === i ? 1 : 0,
-      zIndex: activeIndex === i ? 0 : -1,
-    }}
-    native
-  >{ styles => (<Image style={styles} color={get(photos[i], 'color')} background={get(photos[i], 'urls.full', '')}>
-      <Gradient />
-      <Title>{get(photos[i], 'location.title')}</Title>
-    </Image>)
-  }</Spring>
-));
+export const ImageContainer = ({ photoData = [], activeIndex = 0 }) => map(photoData, (p, i) => (
+    <Spring
+      key={get(p, 'id')}
+      config={{
+        duration: 1200,
+        delay: 1200,
+      }}
+      from={{ opacity: 0, zIndex: -1 }}
+      to={{
+        opacity: activeIndex === i ? 1 : 0,
+        zIndex: activeIndex === i ? 0 : -1,
+      }}
+      native
+    >{ styles => (<Image style={styles} color={get(p, 'color')} background={get(p, 'urls.full', '')}>
+        <Gradient />
+        <Title>{get(p, 'location.title')}</Title>
+      </Image>)
+    }</Spring>
+  ));

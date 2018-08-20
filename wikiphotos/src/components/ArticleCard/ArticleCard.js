@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
 
+import { goToPhoto } from '../../actions'
+
 const Card = styled(animated.div)`
   background-color: white;
   border-radius: .5rem;
@@ -68,14 +70,12 @@ const Link = styled.a`
 
 export const ArticleCard = ({
   text,
-  title,
-  page = 0,
-  activeIndex,
-  isActive,
   linkUrl,
   wikiUrl,
-  windowWidth,
-  onClick,
+  activeIndex,
+  index,
+  isActive,
+  dispatch,
 }) => (
   <Spring
     config={{
@@ -92,7 +92,7 @@ export const ArticleCard = ({
     native
   >
     {styles => (
-      <Card onClick={onClick} style={styles}>
+      <Card onClick={() => { dispatch(goToPhoto(index)) }} style={styles}>
         <CardContent>{text}</CardContent>
         <Transition
           from={{ transform: 'translateY(12rem)' }}

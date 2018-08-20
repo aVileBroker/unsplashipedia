@@ -19,25 +19,17 @@ const List = styled.div`
   align-items: flex-end;
 `;
 
-export const ArticleList = ({
-  data,
-  activeIndex=0,
-  setIndex,
-  page,
-  windowWidth,
-}) => (
-  <List page={page}>
-    {map(data, ({ id, description, links, location, isActive }, index) => (
+export const ArticleList = ({ photoData, activeIndex }) => (
+  <List>
+    {map(photoData, ({ id, description, links, location, wikipediaDescription }, index) => (
       <ArticleCard
         key={id}
-        page={page}
-        windowWidth={windowWidth}
-        text={description}
+        index={index}
+        text={wikipediaDescription || description}
+        isActive={activeIndex === index}
+        activeIndex={activeIndex}
         linkUrl={links.html}
         wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}
-        isActive={index === activeIndex}
-        activeIndex={activeIndex}
-        onClick={() => {setIndex(index)}}
       />
     ))}
   </List>
