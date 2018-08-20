@@ -120,7 +120,6 @@ class App extends Component {
   }
 
   pauseRotation = () => {
-    const { dispatch } = this.props;
     const { interval, readingTimer } = this.state;
 
     // stop it from rotating further
@@ -144,8 +143,9 @@ class App extends Component {
     const {
       photoData,
       activeIndex = 0,
-      openIndex = 0,
+      openIndex = -1,
       page = 0,
+      windowWidth,
       articlesPerPage = 0,
       dispatch,
     } = this.props;
@@ -164,6 +164,7 @@ class App extends Component {
             page={page}
             articlesPerPage={articlesPerPage}
             photoData={photoData}
+            windowWidth={windowWidth}
             activeIndex={activeIndex}
             openIndex={openIndex}
           />,
@@ -181,6 +182,7 @@ const mapStateToProps = (state) => {
     pausedOn: state.pausedOn,
     page: state.page,
     articlesPerPage: state.articlesPerPage,
+    windowWidth: state.windowWidth,
   }
 };
 

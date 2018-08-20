@@ -13,10 +13,6 @@ const List = styled.div`
   left: 0;
 
   width: 100%;
-
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
 `;
 
 export const ArticleList = ({
@@ -24,6 +20,7 @@ export const ArticleList = ({
   activeIndex,
   openIndex,
   page,
+  windowWidth,
   articlesPerPage,
   dispatch
 }) => (
@@ -37,8 +34,10 @@ export const ArticleList = ({
         text={wikipediaDescription || description}
         isActive={activeIndex === index}
         isOpen={openIndex === index}
+        openIndex={openIndex}
         activeIndex={activeIndex}
         page={page}
+        windowWidth={windowWidth}
         articlesPerPage={articlesPerPage}
         linkUrl={links.html}
         wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}

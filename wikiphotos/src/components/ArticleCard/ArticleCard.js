@@ -9,6 +9,11 @@ const Card = styled(animated.div)`
   border-radius: .5rem;
   box-shadow: 0rem .25rem 1rem -.5rem rgba(0,0,0,0.5);
 
+  position:absolute;
+  left: 0%;
+  bottom: .25rem;
+  z-index: ${props => props.isOpen ? 1 : 0};
+
   cursor: pointer;
 
   margin: 1rem;
@@ -18,7 +23,6 @@ const Card = styled(animated.div)`
   flex: 0 0 16rem;
   flex-direction: column;
   align-items: flex-end;
-  position:relative;
   overflow: hidden;
 `;
 
@@ -93,10 +97,12 @@ export const ArticleCard = ({
   wikiUrl,
   activeIndex,
   page,
+  windowWidth,
   articlesPerPage,
   index,
   isActive,
   isOpen,
+  openIndex,
   dispatch,
 }) => (
   <Spring
@@ -104,17 +110,23 @@ export const ArticleCard = ({
       duration: 1200,
     }}
     from={{
+      opacity: 1,
       height: '3rem',
-      transform: 'translateX(0px)',
+      width: '304px',
+      left: '0px',
+      transform: 'translate(0px, 0px)',
       expandRotation: 'rotate(45deg)',
     }}
     to={{
+      opacity: (openIndex !== null && !isOpen) ? .3 : 1,
       height: isOpen
         ? '25rem'
         : isActive
           ? '16rem'
           : '3rem',
-      transform: `translateX(${(-1 * ((page * articlesPerPage * 336)) + 48)}px)`,
+      left: isOpen ? `${(windowWidth/2) || 0}px` : '0px',
+      width: isOpen ? '608px' : '304px',
+      transform: isOpen ? 'translate(-304px, -64px)' : `translate(${(((index * 384) + (-1 * page * articlesPerPage * 336)) + 48)}px, 0px)`,
       expandRotation: `rotate(${isOpen ? '0' : '45' }deg)`,
     }}
     native
@@ -122,9 +134,13 @@ export const ArticleCard = ({
     {styles => (
       <Card
         onClick={() => { dispatch(pauseOn(index)) }}
+        isOpen={isOpen}
         style={{
+          opacity: styles.opacity,
           height: styles.height,
           transform: styles.transform,
+          left: styles.left,
+          width: styles.width,
         }}
       >
         {isActive &&

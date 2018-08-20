@@ -43,7 +43,7 @@ const photos = (state, action) => {
     case 'CLOSE_DETAILS':
       return {
         ...state,
-        openIndex: -1,
+        openIndex: null,
       }
 
     case 'RESUME':
