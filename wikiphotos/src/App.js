@@ -70,7 +70,7 @@ class App extends Component {
             .then(wikiData => {
               if(has(wikiData, 'query.pages[0].revisions[0]')) {
                 filteredData[index].wikipediaDescription = wikiData.query.pages[0].revisions[0].content;
-              } else { console.log(`wikipedia returned no data for ${photo.location.title}`); }
+              } else { console.log(`No Wikipedia page found for ${photo.location.title}`); }
             });
           });
 
