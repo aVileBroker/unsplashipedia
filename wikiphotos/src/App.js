@@ -7,6 +7,7 @@ import get from 'lodash/get';
 import has from 'lodash/has';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
+import throttle from 'lodash/throttle';
 
 import { ImageContainer } from './components/ImageContainer';
 import { ArticleList } from './components/ArticleList';
@@ -32,7 +33,7 @@ class App extends Component {
     this.imageStore = [];
     this.wrapper = null;
 
-    window.onresize = () => props.dispatch(setWindowWidth(get(this.wrapper, 'clientWidth', this.props.clientWidth)));
+    window.onresize = throttle(() => props.dispatch(setWindowWidth(get(this.wrapper, 'clientWidth', this.props.clientWidth))), 100);
     props.dispatch(initState());
 
     this.state = {
