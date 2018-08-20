@@ -54,6 +54,8 @@ class App extends Component {
       .then(data => {
         filteredData = filter(data, d => { return has(d, 'location.name'); });
 
+        dispatch(setPhotos(filteredData));
+
         forEach(filteredData, (photo, index) => {
           // preload the image
           const preload = new Image();
@@ -78,11 +80,12 @@ class App extends Component {
               if(has(wikiData, 'query.pages[0].revisions[0].content')) {
                 const text = wtf(wikiData.query.pages[0].revisions[0].content).text();
                 filteredData[index].wikipediaDescription = text.substring(0, 500).includes('may refer to') ? undefined : text;
+
+                dispatch(setPhotos(filteredData));
               } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
           });
 
-      dispatch(setPhotos(filteredData));
       dispatch(setWindowWidth(this.wrapper.clientWidth));
     });
   }
