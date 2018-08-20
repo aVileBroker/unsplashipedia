@@ -69,9 +69,9 @@ class App extends Component {
               return response.json();
             })
             .then(wikiData => {
-              if(has(wikiData, 'query.pages[0].revisions[0]')) {
+              if(has(wikiData, 'query.pages[0].revisions[0].content')) {
                 const text = wtf(wikiData.query.pages[0].revisions[0].content).text();
-                filteredData[index].wikipediaDescription = text.subString(0, 100).includes('may refer to') ? '' : text;
+                filteredData[index].wikipediaDescription = text.substring(0, 500).includes('may refer to') ? null : text;
               } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
           });
@@ -107,7 +107,7 @@ class App extends Component {
   }
 
   resumeRotation = () => {
-    this.setState({ interval: window.setInterval(this.nextArticle, 3000) });
+    this.setState({ interval: window.setInterval(this.nextArticle, 10000) });
   }
 
   render() {

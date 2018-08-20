@@ -31,20 +31,11 @@ const CardContent = styled.div`
 
 const LinkContainer = styled(animated.div)`
   width: 100%;
+  height: 8rem;
   position: absolute;
   bottom: .75rem;
   left: 0;
   z-index: 2;
-`;
-
-const Gradient = styled.div`
-  width: 100%;
-  height: 6rem;
-
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
 
   background-image:linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,.75) 50%, rgba(255,255,255,0));
 `;
@@ -102,7 +93,6 @@ export const ArticleCard = ({
         >
           {isActive && ( styles => (
             <LinkContainer style={styles}>
-              <Gradient />
               <Link side="left" href={linkUrl}>VIEW PHOTO</Link>
               <Link side="right" href={wikiUrl}>READ MORE</Link>
             </LinkContainer>
