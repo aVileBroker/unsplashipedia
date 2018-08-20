@@ -20,27 +20,18 @@ const Image = styled(animated.div)`
   left: 0;
 `;
 
-const Gradient = styled.div`
-  width: 100%;
-  height: 12rem;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-
-  background-image:linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
-`;
-
 const Title = styled.div`
   color: white;
   font-size: 2.5rem;
-  margin: 2rem 3rem;
+  padding: 2rem 3rem 10rem 3rem;
   text-shadow: 0px .125rem .75rem rgba(0,0,0,0.25);
   z-index: 2;
   position: absolute;
   top: 0;
   left: 0;
+
+  width: 100%;
+  background-image:linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0));
 `;
 
 export const ImageContainer = ({ photoData = [], activeIndex = 0 }) => map(photoData, (p, i) => (
@@ -57,7 +48,6 @@ export const ImageContainer = ({ photoData = [], activeIndex = 0 }) => map(photo
       }}
       native
     >{ styles => (<Image style={styles} color={get(p, 'color')} background={get(p, 'urls.full', '')}>
-        <Gradient />
         <Title>{get(p, 'location.title')}</Title>
       </Image>)
     }</Spring>

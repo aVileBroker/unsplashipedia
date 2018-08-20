@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
 
-import { goToPhoto } from '../../actions'
+import { pauseOn } from '../../actions'
 
 const Card = styled(animated.div)`
   background-color: white;
@@ -29,22 +29,19 @@ const CardContent = styled.div`
   line-height: 1.1;
 `;
 
+const CardTitle = styled.div`
+  font-size: 1.2rem;
+  color: black;
+  margin-bottom: .5rem;
+`;
+
 const LinkContainer = styled(animated.div)`
   width: 100%;
+  height: 8rem;
   position: absolute;
   bottom: .75rem;
   left: 0;
   z-index: 2;
-`;
-
-const Gradient = styled.div`
-  width: 100%;
-  height: 6rem;
-
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
 
   background-image:linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,.75) 50%, rgba(255,255,255,0));
 `;
@@ -70,9 +67,12 @@ const Link = styled.a`
 
 export const ArticleCard = ({
   text,
+  title,
   linkUrl,
   wikiUrl,
   activeIndex,
+  page,
+  articlesPerPage,
   index,
   isActive,
   dispatch,
@@ -87,13 +87,18 @@ export const ArticleCard = ({
     }}
     to={{
       height: isActive ? '16rem' : '3rem',
-      transform: `translateX(${(-1 * (activeIndex * 336)) + 48}px)`,
+      transform: `translateX(${(-1 * ((page * articlesPerPage * 336)) + 48)}px)`,
     }}
     native
   >
     {styles => (
-      <Card onClick={() => { dispatch(goToPhoto(index)) }} style={styles}>
-        <CardContent>{text}</CardContent>
+      <Card
+        onClick={() => {
+          dispatch(pauseOn(index));
+        }}
+        style={styles}
+      >
+        <CardContent><CardTitle>{title}</CardTitle>{text}</CardContent>
         <Transition
           from={{ transform: 'translateY(12rem)' }}
           enter={{ transform: 'translateY(0rem)' }}
@@ -102,7 +107,6 @@ export const ArticleCard = ({
         >
           {isActive && ( styles => (
             <LinkContainer style={styles}>
-              <Gradient />
               <Link side="left" href={linkUrl}>VIEW PHOTO</Link>
               <Link side="right" href={wikiUrl}>READ MORE</Link>
             </LinkContainer>

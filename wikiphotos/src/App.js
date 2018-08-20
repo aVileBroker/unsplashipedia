@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import wtf from 'wtf_wikipedia';
 
 import has from 'lodash/has';
 import filter from 'lodash/filter';
@@ -10,9 +11,11 @@ import { ImageContainer } from './components/ImageContainer';
 import { ArticleList } from './components/ArticleList';
 
 import {
+  initState,
   setPhotos,
   goToPhoto,
   setWindowWidth,
+  resume,
 } from './actions';
 
 const Wrapper = styled.div`
@@ -27,9 +30,13 @@ class App extends Component {
     super(props);
     this.imageStore = [];
     this.wrapper = null;
+
+    window.onresize = () => props.dispatch(setWindowWidth(this.wrapper.clientWidth));
+    props.dispatch(initState());
+
     this.state = {
       interval: null,
-      afkTimer: null,
+      readingTimer: null,
     };
   }
 
@@ -40,12 +47,14 @@ class App extends Component {
     fetch('https://api.unsplash.com/photos/random?client_id=e2b41587283713a6edaa232ae6820afe8c9a6c0b6164c123df7582b1abcb565c&count=500')
       .then(response => {
         if (response.status >= 400) {
-          throw new Error("Bad response from server");
+          throw new Error(`Unsplash Server ${response.status} Error`);
         }
         return response.json();
       })
       .then(data => {
-        filteredData = filter(data, d => { return has(d, 'location.title'); });
+        filteredData = filter(data, d => { return has(d, 'location.name'); });
+
+        dispatch(setPhotos(filteredData));
 
         forEach(filteredData, (photo, index) => {
           // preload the image
@@ -53,7 +62,7 @@ class App extends Component {
           preload.src = photo.urls.full;
           this.imageStore.push(preload);
 
-          fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.title}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
+          fetch(`https://cors-anywhere.herokuapp.com/https://en.wikipedia.org/w/api.php?action=query&titles=${photo.location.name}&prop=revisions&rvprop=content&format=json&formatversion=2&redirects`,
             {
               method: 'POST',
               headers: new Headers( {
@@ -63,25 +72,32 @@ class App extends Component {
             })
             .then(response => {
               if (response.status >= 400) {
-                throw new Error("Bad response from server");
+                throw new Error(`Wikipedia Server ${response.status} Error`);
               }
               return response.json();
             })
             .then(wikiData => {
-              if(has(wikiData, 'query.pages[0].revisions[0]')) {
-                filteredData[index].wikipediaDescription = wikiData.query.pages[0].revisions[0].content;
-              } else { console.log(`No Wikipedia page found for ${photo.location.title}`); }
+              if(has(wikiData, 'query.pages[0].revisions[0].content')) {
+                const text = wtf(wikiData.query.pages[0].revisions[0].content).text();
+                filteredData[index].wikipediaDescription = text.substring(0, 500).includes('may refer to') ? undefined : text;
+
+                dispatch(setPhotos(filteredData));
+              } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
           });
 
-      dispatch(setPhotos(filteredData));
       dispatch(setWindowWidth(this.wrapper.clientWidth));
-      this.resumeRotation();
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if(this.props.pausedOn !== prevProps.pausedOn) {
+      this.pauseRotation();
+    }
+  }
+
   nextArticle = () => {
-    const { dispatch, photoData = [], activeIndex = 0 } = this.props;
+    const { dispatch, photoData = [], activeIndex = -1 } = this.props;
 
     dispatch(goToPhoto(activeIndex + 1 === photoData.length
       ? 0
@@ -89,7 +105,7 @@ class App extends Component {
   }
 
   pauseRotation = () => {
-    const { interval, afkTimer } = this.state;
+    const { interval, readingTimer } = this.state;
 
     // stop it from rotating further
     if(interval) {
@@ -98,20 +114,26 @@ class App extends Component {
     }
 
     // restart the timer to 6 seconds
-    if(afkTimer) {
-      window.clearTimeout(afkTimer)
+    if(readingTimer) {
+      window.clearTimeout(readingTimer)
     }
-    this.setState({ afkTimer: window.setTimeout(this.resumeRotation, 6000) });
+    this.setState({ readingTimer: window.setTimeout(this.resumeRotation, 6000) });
   }
 
   resumeRotation = () => {
-    this.setState({ interval: window.setInterval(this.nextArticle, 3000) });
+    const { dispatch } = this.props;
+    dispatch(resume());
+    this.setState({ interval: window.setInterval(this.nextArticle, 6000) });
   }
 
   render() {
-    const { photoData, activeIndex = 0 } = this.props;
-
-    console.log(this.props);
+    const {
+      photoData,
+      activeIndex = 0,
+      page = 0,
+      articlesPerPage = 0,
+      dispatch,
+    } = this.props;
 
     return (
       <Wrapper innerRef={w => this.wrapper = w}>
@@ -123,6 +145,9 @@ class App extends Component {
           />,
           <ArticleList
             key="list"
+            dispatch={dispatch}
+            page={page}
+            articlesPerPage={articlesPerPage}
             photoData={photoData}
             activeIndex={activeIndex}
           />,
@@ -136,6 +161,9 @@ const mapStateToProps = (state) => {
   return {
     photoData: state.photoData,
     activeIndex: state.activeIndex,
+    pausedOn: state.pausedOn,
+    page: state.page,
+    articlesPerPage: state.articlesPerPage,
   }
 };
 
