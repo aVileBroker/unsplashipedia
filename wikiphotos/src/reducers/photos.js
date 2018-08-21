@@ -5,7 +5,7 @@ const photos = (state, action) => {
         photoData: [],
         page: 0,
         articlesPerPage: 3,
-        activeIndex: -1,
+        activeIndex: 0,
         openIndex: null,
         pausedOn: null,
       };

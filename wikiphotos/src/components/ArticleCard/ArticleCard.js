@@ -113,14 +113,16 @@ const Link = styled.a`
 `;
 
 const Timer = styled(animated.div)`
-  height: .5rem;
-  background-color: #77f;
+  height: ${props => props.isPaused ? '.5rem' : '.25rem'};
+  background-color: ${props => props.isPaused ? '#cc0' : '#77f'};
   width: 100%;
   position: absolute;
   left: 0;
   bottom: 0;
   transform-origin: left;
   border-radius: 0px 16px 16px 16px;
+
+  z-index: 10;
 `;
 
 export const ArticleCard = ({
@@ -208,12 +210,12 @@ export const ArticleCard = ({
             {photogName}
           </PhotogInfo>
         </CardContent>
-        {(isActive && !isOpen) &&
+        {(isActive && !isOpen && !isPaused) &&
           <Spring
             native
             impl={TimingAnimation}
             config={{
-              duration: isPaused ? 12000 : 6000,
+              duration: 6000,
               easing: Easing.linear,
             }}
             from={{ width: '100%' }}
@@ -223,6 +225,9 @@ export const ArticleCard = ({
               <Timer style={styles} />
             )}
           </Spring>
+        }
+        {isPaused &&
+          <Timer isPaused />
         }
         <Transition
           from={{ transform: 'translateY(12rem)' }}
