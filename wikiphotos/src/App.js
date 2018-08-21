@@ -149,10 +149,7 @@ class App extends Component {
   }
 
   render() {
-    const {
-      photoData,
-      activeIndex = 0,
-    } = this.props;
+    const { photoData } = this.props;
 
     return (
       <Wrapper innerRef={w => this.wrapper = w}>
@@ -168,7 +165,6 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     photoData: state.photoData,
-    activeIndex: state.activeIndex,
     openIndex: state.openIndex,
     pausedOn: state.pausedOn,
     clientDimensions: state.clientDimensions,
