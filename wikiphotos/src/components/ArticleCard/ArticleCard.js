@@ -22,6 +22,8 @@ const Card = styled(animated.div)`
   flex-direction: column;
   align-items: flex-end;
 
+  overflow: hidden;
+
   z-index: ${props => props.isOpen ? 10 : 0 };
 `;
 
@@ -123,6 +125,26 @@ const Timer = styled(animated.div)`
   border-radius: 0px 16px 16px 16px;
 
   z-index: 10;
+
+  ${props => props.isPaused ? `
+    &::before{
+      content: '';
+      width:3rem;
+      height:3rem;
+
+      left: calc(50% - 1.5rem);
+
+      background-image: url('images/pause.svg');
+      background-position: center;
+      background-color: #cc0;
+      background-size: 1rem;
+      background-repeat: no-repeat;
+
+      position:absolute;
+      bottom: 0rem;
+      border-radius: 50%;
+    }
+  `: ''}
 `;
 
 export const ArticleCard = ({
@@ -226,7 +248,7 @@ export const ArticleCard = ({
             )}
           </Spring>
         }
-        {isPaused &&
+        {(isPaused && !isOpen) &&
           <Timer isPaused />
         }
         <Transition

@@ -125,7 +125,7 @@ class App extends Component {
     }
 
     if(openIndex !== prevProps.openIndex) {
-      if( openIndex !== -1 ) {
+      if( openIndex !== null ) {
         this.pauseRotation();
       }
     }
