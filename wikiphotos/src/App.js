@@ -7,7 +7,7 @@ import get from 'lodash/get';
 import has from 'lodash/has';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
-import throttle from 'lodash/throttle';
+import debounce from 'lodash/debounce';
 
 import { ListContainer, ImageContainer } from './containers';
 
@@ -43,7 +43,7 @@ class App extends Component {
       this.setState({ readingTimer: window.setTimeout(() => props.resume(), 0) });
     }
 
-    window.onresize = throttle(() => props.setClientDimensions({
+    window.onresize = debounce(() => props.setClientDimensions({
       width: get(this.wrapper, 'clientWidth', this.props.clientDimensions.width),
       height: get(this.wrapper, 'clientHeight', this.props.clientDimensions.height),
     }), 200);
