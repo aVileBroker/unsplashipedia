@@ -122,7 +122,6 @@ const Timer = styled(animated.div)`
   left: 0;
   bottom: 0;
   transform-origin: left;
-  border-radius: 0px 16px 16px 16px;
 
   z-index: 10;
 
