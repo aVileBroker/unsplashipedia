@@ -6,6 +6,7 @@ const mapStateToProps = (state) => {
     photoData: state.photoData,
     activeIndex: state.activeIndex,
     openIndex: state.openIndex,
+    pausedOn: state.pausedOn,
     page: state.page,
     articlesPerPage: state.articlesPerPage,
     clientDimensions: state.clientDimensions,

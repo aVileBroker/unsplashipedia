@@ -7,7 +7,7 @@ import get from 'lodash/get';
 import has from 'lodash/has';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
-import throttle from 'lodash/throttle';
+import debounce from 'lodash/debounce';
 
 import { ListContainer, ImageContainer } from './containers';
 
@@ -17,6 +17,7 @@ import {
   goToPhoto,
   setClientDimensions,
   resume,
+  pauseOn,
 } from './actions';
 
 const Wrapper = styled.div`
@@ -32,7 +33,17 @@ class App extends Component {
     this.imageStore = [];
     this.wrapper = null;
 
-    window.onresize = throttle(() => props.setClientDimensions({
+    window.onblur = () => {
+      props.pauseOn(this.props.activeIndex || 0);
+      this.pauseRotation();
+    }
+
+    window.onfocus = () => {
+      props.pauseOn(this.props.activeIndex || 0);
+      this.setState({ readingTimer: window.setTimeout(() => props.resume(), 0) });
+    }
+
+    window.onresize = debounce(() => props.setClientDimensions({
       width: get(this.wrapper, 'clientWidth', this.props.clientDimensions.width),
       height: get(this.wrapper, 'clientHeight', this.props.clientDimensions.height),
     }), 200);
@@ -145,7 +156,6 @@ class App extends Component {
 
   resumeRotation = () => {
     this.setState({ interval: window.setInterval(this.nextArticle, 6000) });
-    this.nextArticle();
   }
 
   render() {
@@ -179,6 +189,7 @@ const mapDispatchToProps = dispatch => {
     goToPhoto: i => dispatch(goToPhoto(i)),
     setClientDimensions: (d) => dispatch(setClientDimensions(d)),
     resume: () => dispatch(resume()),
+    pauseOn: i => dispatch(pauseOn(i)),
   }
 };
 

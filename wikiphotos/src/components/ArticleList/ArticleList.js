@@ -19,6 +19,7 @@ export const ArticleList = ({
   photoData,
   activeIndex,
   openIndex,
+  pausedOn,
   page,
   clientDimensions,
   articlesPerPage,
@@ -30,6 +31,7 @@ export const ArticleList = ({
 
         isActive={activeIndex === index}
         isOpen={openIndex === index}
+        isPaused={pausedOn === index}
 
         key={id}
         text={wikipediaDescription || description || 'Loading description from Wikipedia...'}

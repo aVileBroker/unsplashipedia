@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
+import { TimingAnimation, Easing } from 'react-spring/dist/addons';
 
 const Card = styled(animated.div)`
   background-color: white;
@@ -111,6 +112,19 @@ const Link = styled.a`
   }
 `;
 
+const Timer = styled(animated.div)`
+  height: ${props => props.isPaused ? '.5rem' : '.25rem'};
+  background-color: ${props => props.isPaused ? '#cc0' : '#77f'};
+  width: 100%;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform-origin: left;
+  border-radius: 0px 16px 16px 16px;
+
+  z-index: 10;
+`;
+
 export const ArticleCard = ({
   text,
   title,
@@ -126,6 +140,7 @@ export const ArticleCard = ({
   index,
   isActive,
   isOpen,
+  isPaused,
   openIndex,
 
   closeDetails,
@@ -133,8 +148,9 @@ export const ArticleCard = ({
   pauseOn,
 }) => (
   <Spring
+    impl={TimingAnimation}
     config={{
-      duration: 1200,
+      duration: 300,
     }}
     from={{
       opacity: 1,
@@ -186,7 +202,33 @@ export const ArticleCard = ({
             &times;
           </ExpandCloseButton>
         }
-        <CardContent><CardTitle>{title}</CardTitle>{text}<PhotogInfo href={photogLink}><ProfilePic image={photogAvatar} />{photogName}</PhotogInfo></CardContent>
+        <CardContent>
+          <CardTitle>{title}</CardTitle>
+          {text}
+          <PhotogInfo href={photogLink}>
+            <ProfilePic image={photogAvatar} />
+            {photogName}
+          </PhotogInfo>
+        </CardContent>
+        {(isActive && !isOpen && !isPaused) &&
+          <Spring
+            native
+            impl={TimingAnimation}
+            config={{
+              duration: 6000,
+              easing: Easing.linear,
+            }}
+            from={{ width: '100%' }}
+            to={{ width: `${isActive ? 0 : 100}%` }}
+          >
+            {styles => (
+              <Timer style={styles} />
+            )}
+          </Spring>
+        }
+        {isPaused &&
+          <Timer isPaused />
+        }
         <Transition
           from={{ transform: 'translateY(12rem)' }}
           enter={{ transform: 'translateY(0rem)' }}
