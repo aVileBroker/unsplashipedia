@@ -38,7 +38,10 @@ export const ImageRotator = ({ photoData = [], activeIndex = 0 }) => map(photoDa
     <Spring
       key={get(p, 'id')}
       impl={TimingAnimation}
-      config={{ duration: 600 }}
+      config={{
+        duration: 600,
+        easing: Easing.easeOut,
+      }}
       from={{ opacity: 0, zIndex: -1 }}
       to={{
         opacity: activeIndex === i ? 1 : 0,
