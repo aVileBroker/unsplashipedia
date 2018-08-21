@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import map from 'lodash/map';
 
-import { ArticleCard } from '../ArticleCard';
+import { CardContainer } from '../../containers';
 
 const List = styled.div`
   background-color: #ddd;
@@ -22,24 +22,18 @@ export const ArticleList = ({
   page,
   clientDimensions,
   articlesPerPage,
-  dispatch
 }) => (
   <List>
     {map(photoData, ({ id, description, links, location, wikipediaDescription, user }, index) => (
-      <ArticleCard
-        key={id}
+      <CardContainer
         index={index}
-        dispatch={dispatch}
-        title={location.title}
-        text={wikipediaDescription || description || 'Loading description from Wikipedia...'}
+
         isActive={activeIndex === index}
         isOpen={openIndex === index}
-        openIndex={openIndex}
-        activeIndex={activeIndex}
-        page={page}
-        clientDimensions={clientDimensions}
 
-        articlesPerPage={articlesPerPage}
+        key={id}
+        text={wikipediaDescription || description || 'Loading description from Wikipedia...'}
+        title={location.title}
         linkUrl={links.html}
         wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}
         photogAvatar={user.profile_image.medium}

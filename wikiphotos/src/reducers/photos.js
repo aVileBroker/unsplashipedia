@@ -11,7 +11,7 @@ const photos = (state, action) => {
       };
 
     case 'SET_CLIENT_DIMENSIONS':
-      const articlesPerPage =  Math.floor((action.clientDimensions.width - 48) / 336);
+      const articlesPerPage =  Math.floor((action.clientDimensions.width - 48) / 385);
 
       return {
         ...state,

@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
 
-import { closeDetails, expandDetails, pauseOn } from '../../actions'
-
 const Card = styled(animated.div)`
   background-color: white;
   border-radius: .5rem;
@@ -22,6 +20,8 @@ const Card = styled(animated.div)`
   flex: 0 0 16rem;
   flex-direction: column;
   align-items: flex-end;
+
+  z-index: ${props => props.isOpen ? 10 : 0 };
 `;
 
 const CardContent = styled.div`
@@ -127,7 +127,10 @@ export const ArticleCard = ({
   isActive,
   isOpen,
   openIndex,
-  dispatch,
+
+  closeDetails,
+  expandDetails,
+  pauseOn,
 }) => (
   <Spring
     config={{
@@ -140,11 +143,9 @@ export const ArticleCard = ({
       left: '0px',
       transform: 'translate(0px, 0px)',
       expandRotation: 'rotate(45deg)',
-      zIndex: 0,
     }}
     to={{
       opacity: (openIndex !== null && !isOpen) ? .3 : 1,
-      zIndex: isOpen ? 1 : 0,
       height: isOpen
         ? `${clientDimensions.height - 240}px`
         : isActive
@@ -159,7 +160,8 @@ export const ArticleCard = ({
   >
     {styles => (
       <Card
-        onClick={() => { dispatch(pauseOn(index)) }}
+        onClick={() => { pauseOn(index) }}
+        isOpen={isOpen}
         style={{
           opacity: styles.opacity,
           height: styles.height,
@@ -172,7 +174,14 @@ export const ArticleCard = ({
         {isActive &&
           <ExpandCloseButton
             style={{ transform: styles.expandRotation }}
-            onClick={(e) => {e.stopPropagation(); dispatch(isOpen ? closeDetails() : expandDetails(index))}}
+            onClick={(e) => {
+              e.stopPropagation();
+              if(isOpen) {
+                closeDetails();
+              } else {
+                expandDetails(index);
+              }
+            }}
           >
             &times;
           </ExpandCloseButton>

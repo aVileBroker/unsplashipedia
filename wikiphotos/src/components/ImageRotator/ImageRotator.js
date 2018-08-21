@@ -4,7 +4,6 @@ import map from 'lodash/map';
 import get from 'lodash/get';
 import { Spring, animated } from 'react-spring';
 
-
 const Image = styled(animated.div)`
   background-image: url('${props => props.background}');
   background-position: center;
@@ -34,7 +33,7 @@ const Title = styled.div`
   background-image:linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0));
 `;
 
-export const ImageContainer = ({ photoData = [], activeIndex = 0 }) => map(photoData, (p, i) => (
+export const ImageRotator = ({ photoData = [], activeIndex = 0 }) => map(photoData, (p, i) => (
     <Spring
       key={get(p, 'id')}
       config={{

@@ -9,7 +9,7 @@ import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import throttle from 'lodash/throttle';
 
-import { ArticleList, ImageContainer } from './components';
+import { ListContainer, ImageContainer } from './containers';
 
 import {
   initState,
@@ -32,12 +32,12 @@ class App extends Component {
     this.imageStore = [];
     this.wrapper = null;
 
-    window.onresize = throttle(() => props.dispatch(setClientDimensions({
+    window.onresize = throttle(() => props.setClientDimensions({
       width: get(this.wrapper, 'clientWidth', this.props.clientDimensions.width),
       height: get(this.wrapper, 'clientHeight', this.props.clientDimensions.height),
-    })), 200);
-    
-    props.dispatch(initState());
+    }), 200);
+
+    props.initState();
 
     this.state = {
       interval: null,
@@ -46,7 +46,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { setPhotos, setClientDimensions } = this.props;
     let filteredData;
 
     fetch('https://api.unsplash.com/photos/random?client_id=e2b41587283713a6edaa232ae6820afe8c9a6c0b6164c123df7582b1abcb565c&count=500')
@@ -60,7 +60,7 @@ class App extends Component {
       .then(data => {
         filteredData = filter(data, d => { return has(d, 'location.name'); });
 
-        dispatch(setPhotos(filteredData));
+        setPhotos(filteredData);
 
         forEach(filteredData, (photo, index) => {
           // preload the image
@@ -88,42 +88,44 @@ class App extends Component {
                 const text = wtf(wikiData.query.pages[0].revisions[0].content).text();
                 filteredData[index].wikipediaDescription = text.substring(0, 500).includes('may refer to') ? undefined : text.substring(0, 1000)+'...';
 
-                dispatch(setPhotos(filteredData));
+                setPhotos(filteredData);
               } else { console.log(`No Wikipedia page found for ${photo.location.name}`); }
             });
           });
-      dispatch(setClientDimensions({
+      setClientDimensions({
         width: this.wrapper.clientWidth,
         height: this.wrapper.clientHeight,
-      }));
+      });
     });
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.pausedOn !== prevProps.pausedOn) {
-      if(this.props.pausedOn !== null) {
+    const { pausedOn, resume, openIndex } = this.props;
+
+    if(pausedOn !== prevProps.pausedOn) {
+      if(pausedOn !== null) {
 
         this.pauseRotation();
-        this.setState({ readingTimer: window.setTimeout(() => this.props.dispatch(resume()), 10000) });
+        this.setState({ readingTimer: window.setTimeout(() => resume(), 10000) });
 
       } else {
         this.resumeRotation();
       }
     }
 
-    if(this.props.openIndex !== prevProps.openIndex) {
-      if( this.props.openIndex !== -1 ) {
+    if(openIndex !== prevProps.openIndex) {
+      if( openIndex !== -1 ) {
         this.pauseRotation();
       }
     }
   }
 
   nextArticle = () => {
-    const { dispatch, photoData = [], activeIndex = -1 } = this.props;
+    const { goToPhoto, photoData = [], activeIndex = -1 } = this.props;
 
-    dispatch(goToPhoto(activeIndex + 1 === photoData.length
+    goToPhoto(activeIndex + 1 === photoData.length
       ? 0
-      : activeIndex+1));
+      : activeIndex+1);
   }
 
   pauseRotation = () => {
@@ -150,47 +152,37 @@ class App extends Component {
     const {
       photoData,
       activeIndex = 0,
-      openIndex = -1,
-      page = 0,
-      clientDimensions,
-      articlesPerPage = 0,
-      dispatch,
     } = this.props;
 
     return (
       <Wrapper innerRef={w => this.wrapper = w}>
         {(!!photoData && photoData.length > 0) && [
-          <ImageContainer
-            key="photo"
-            photoData={photoData}
-            activeIndex={activeIndex}
-          />,
-          <ArticleList
-            key="list"
-            dispatch={dispatch}
-            page={page}
-            articlesPerPage={articlesPerPage}
-            photoData={photoData}
-            clientDimensions={clientDimensions}
-            activeIndex={activeIndex}
-            openIndex={openIndex}
-          />,
+          <ImageContainer key="photo" />,
+          <ListContainer key="list" />,
         ]}
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     photoData: state.photoData,
     activeIndex: state.activeIndex,
     openIndex: state.openIndex,
     pausedOn: state.pausedOn,
-    page: state.page,
-    articlesPerPage: state.articlesPerPage,
     clientDimensions: state.clientDimensions,
   }
 };
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = dispatch => {
+  return {
+    initState: () => dispatch(initState()),
+    setPhotos: p => dispatch(setPhotos(p)),
+    goToPhoto: i => dispatch(goToPhoto(i)),
+    setClientDimensions: (d) => dispatch(setClientDimensions(d)),
+    resume: () => dispatch(resume()),
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
