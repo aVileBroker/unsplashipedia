@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import map from 'lodash/map';
 import get from 'lodash/get';
 import { Spring, animated } from 'react-spring';
+import { TimingAnimation, Easing } from 'react-spring/dist/addons';
 
 const Image = styled(animated.div)`
   background-image: url('${props => props.background}');
@@ -36,10 +37,8 @@ const Title = styled.div`
 export const ImageRotator = ({ photoData = [], activeIndex = 0 }) => map(photoData, (p, i) => (
     <Spring
       key={get(p, 'id')}
-      config={{
-        duration: 1200,
-        delay: 1200,
-      }}
+      impl={TimingAnimation}
+      config={{ duration: 600 }}
       from={{ opacity: 0, zIndex: -1 }}
       to={{
         opacity: activeIndex === i ? 1 : 0,
