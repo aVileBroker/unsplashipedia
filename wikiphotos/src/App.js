@@ -166,6 +166,7 @@ const mapStateToProps = state => {
   return {
     photoData: state.photoData,
     openIndex: state.openIndex,
+    activeIndex: state.activeIndex,
     pausedOn: state.pausedOn,
     clientDimensions: state.clientDimensions,
   }
