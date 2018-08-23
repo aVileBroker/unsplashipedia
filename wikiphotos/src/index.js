@@ -3,16 +3,22 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore } from 'redux';
 import rootReducer from './reducers';
 
 import './index.css';
 
 const store = createStore(
   rootReducer,
-  applyMiddleware(thunk),
+  {
+    photoData: [],
+    page: 0,
+    articlesPerPage: 3,
+    activeIndex: 0,
+    openIndex: null,
+    pausedOn: null,
+  },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
