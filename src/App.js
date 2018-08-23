@@ -12,7 +12,6 @@ import debounce from 'lodash/debounce';
 import { ListContainer, ImageContainer } from './containers';
 
 import {
-  initState,
   setPhotos,
   goToPhoto,
   setClientDimensions,
@@ -47,8 +46,6 @@ class App extends Component {
       width: get(this.wrapper, 'clientWidth', this.props.clientDimensions.width),
       height: get(this.wrapper, 'clientHeight', this.props.clientDimensions.height),
     }), 200);
-
-    props.initState();
 
     this.state = {
       interval: null,
@@ -108,6 +105,7 @@ class App extends Component {
         height: this.wrapper.clientHeight,
       });
     });
+    this.resumeRotation();
   }
 
   componentDidUpdate(prevProps) {
@@ -184,7 +182,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    initState: () => dispatch(initState()),
     setPhotos: p => dispatch(setPhotos(p)),
     goToPhoto: i => dispatch(goToPhoto(i)),
     setClientDimensions: (d) => dispatch(setClientDimensions(d)),

@@ -1,7 +1,3 @@
-export const initState = photoData => ({
-  type: 'INIT_STATE',
-});
-
 export const setClientDimensions = clientDimensions => ({
   type: 'SET_CLIENT_DIMENSIONS',
   clientDimensions,

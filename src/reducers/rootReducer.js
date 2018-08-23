@@ -1,15 +1,5 @@
 const rootReducer = (state, action) => {
   switch ( action.type ) {
-    case 'INIT_STATE':
-      return {
-        photoData: [],
-        page: 0,
-        articlesPerPage: 3,
-        activeIndex: 0,
-        openIndex: null,
-        pausedOn: null,
-      };
-
     case 'SET_CLIENT_DIMENSIONS':
       const articlesPerPage =  Math.floor((action.clientDimensions.width - 48) / 385);
 
