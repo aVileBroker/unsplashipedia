@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import map from 'lodash/map';
+import { withGesture } from 'react-with-gesture';
 
 import { CardContainer } from '../../containers';
 
@@ -15,7 +16,7 @@ const List = styled.div`
   width: 100%;
 `;
 
-export const ArticleList = ({
+export const ArticleList = withGesture(({
   photoData,
   activeIndex,
   openIndex,
@@ -23,8 +24,11 @@ export const ArticleList = ({
   page,
   clientDimensions,
   articlesPerPage,
+  xDelta,
+  down,
+  setScrollOffset,
 }) => (
-  <List>
+  <List onMouseUp={e => setScrollOffset(xDelta) }>
     {map(photoData, ({ id, description, links, location, wikipediaDescription, user }, index) => (
       <CardContainer
         index={index}
@@ -32,6 +36,9 @@ export const ArticleList = ({
         isActive={activeIndex === index}
         isOpen={openIndex === index}
         isPaused={pausedOn === index}
+
+        xDelta={xDelta}
+        underUserControl={down}
 
         key={id}
         text={wikipediaDescription || description || 'Loading description from Wikipedia...'}
@@ -44,4 +51,4 @@ export const ArticleList = ({
       />
     ))}
   </List>
-);
+));

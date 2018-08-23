@@ -32,6 +32,7 @@ const photos = (state, action) => {
         activeIndex: action.index,
         page: Math.floor(action.index / state.articlesPerPage),
         openIndex: null,
+        scrollOffset: 0,
       }
 
     case 'EXPAND_DETAILS':
@@ -59,6 +60,12 @@ const photos = (state, action) => {
         activeIndex: action.index,
         openIndex: null,
         page: Math.floor(action.index / state.articlesPerPage),
+      }
+
+    case 'SET_SCROLL_OFFSET':
+      return {
+        ...state,
+        scrollOffset: state.scrollOffset + action.offset,
       }
 
     default:

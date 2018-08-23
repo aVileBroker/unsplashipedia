@@ -11,6 +11,7 @@ const mapStateToProps = (state) => {
     page: state.page,
     articlesPerPage: state.articlesPerPage,
     clientDimensions: state.clientDimensions,
+    scrollOffset: state.scrollOffset,
   }
 };
 

@@ -17,6 +17,8 @@ const Card = styled(animated.div)`
   margin: 1rem;
   padding: 1.5rem;
 
+  user-select: none;
+
   display: flex;
   flex: 0 0 16rem;
   flex-direction: column;
@@ -164,6 +166,10 @@ export const ArticleCard = ({
   isPaused,
   openIndex,
 
+  xDelta = 0,
+  underUserControl = false,
+  scrollOffset = 0,
+
   closeDetails,
   expandDetails,
   pauseOn,
@@ -173,6 +179,7 @@ export const ArticleCard = ({
     config={{
       duration: 300,
     }}
+    immediate={underUserControl}
     from={{
       opacity: 1,
       height: '96px',
@@ -190,7 +197,9 @@ export const ArticleCard = ({
           : '96px',
       left: isOpen ? `${(clientDimensions.width/2) - 32 || -32}px` : '0px',
       width: isOpen ? `${Math.min(((clientDimensions.width - 32) * .9), 608)}px` : '304px',
-      transform: isOpen ? `translate(-${Math.min(clientDimensions.width*.45, 304)}px, -64px)` : `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 32)}px, 0px)`,
+      transform: isOpen
+        ? `translate(-${Math.min(clientDimensions.width*.45, 304)}px, -64px)`
+        : `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 32 + (underUserControl ? xDelta : 0) + scrollOffset)}px, 0px)`,
       expandRotation: `rotate(${isOpen ? '0' : '45' }deg)`,
     }}
     native

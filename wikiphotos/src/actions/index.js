@@ -34,3 +34,8 @@ export const goToPhoto = index => ({
   type: 'GO_TO_PHOTO',
   index,
 });
+
+export const setScrollOffset = offset => ({
+  type: 'SET_SCROLL_OFFSET',
+  offset,
+})
