@@ -1,3 +1,3 @@
-import photos from './photos';
+import rootReducer from './rootReducer';
 
-export default photos;
+export default rootReducer;

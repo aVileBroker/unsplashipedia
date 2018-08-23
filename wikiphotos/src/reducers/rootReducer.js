@@ -1,4 +1,4 @@
-const photos = (state, action) => {
+const rootReducer = (state, action) => {
   switch ( action.type ) {
     case 'INIT_STATE':
       return {
@@ -68,4 +68,4 @@ const photos = (state, action) => {
   }
 }
 
-export default photos;
+export default rootReducer;
