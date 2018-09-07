@@ -183,7 +183,7 @@ export const ArticleCard = ({
       expandRotation: 'rotate(45deg)',
     }}
     to={{
-      opacity: (openIndex !== null && !isOpen) ? .3 : 1,
+      filter: (openIndex !== null && !isOpen) ? 'blur(2px)' : 'blur(0px)',
       height: isOpen
         ? `${clientDimensions.height - 240}px`
         : isActive
@@ -202,7 +202,7 @@ export const ArticleCard = ({
         isOpen={isOpen}
         style={{
           display: hidden ? 'none' : 'flex',
-          opacity: styles.opacity,
+          filter: styles.filter,
           height: styles.height,
           transform: styles.transform,
           left: styles.left,
