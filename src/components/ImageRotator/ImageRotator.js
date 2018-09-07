@@ -15,6 +15,8 @@ const Image = styled(animated.div)`
 
   background-color: ${props => props.color || `hsl(${Math.random() * 360}, 50%, 50%)`};
 
+  display: ${props => props.hidden ? 'none' : 'block'};
+
   position: fixed;
   top: 0;
   left: 0;
@@ -48,8 +50,14 @@ export const ImageRotator = ({ photoData = [], activeIndex = 0 }) => map(photoDa
         zIndex: activeIndex === i ? 0 : -1,
       }}
       native
-    >{ styles => (<Image style={styles} color={get(p, 'color')} background={get(p, 'urls.full', '')}>
+    >{ styles => (
+      <Image
+        style={styles}
+        hidden={i > activeIndex + 1 || i < activeIndex - 1}
+        color={get(p, 'color')}
+        background={get(p, 'urls.full', '')}
+      >
         <Title>{get(p, 'location.title')}</Title>
-      </Image>)
-    }</Spring>
+      </Image>
+    )}</Spring>
   ));
