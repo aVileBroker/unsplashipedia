@@ -1,8 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import map from 'lodash/map';
 
-import { CardContainer } from '../../containers';
+import { ArticleCard } from '../../components';
 
 const List = styled.div`
   background-color: #ddd;
@@ -15,7 +16,7 @@ const List = styled.div`
   width: 100%;
 `;
 
-export const ArticleList = ({
+const ArticleListBase = ({
   photoData,
   activeIndex,
   openIndex,
@@ -26,7 +27,7 @@ export const ArticleList = ({
 }) => (
   <List>
     {map(photoData, ({ id, description, links, location, wikipediaDescription, user }, index) => (
-      <CardContainer
+      <ArticleCard
         index={index}
 
         isActive={activeIndex === index}
@@ -49,3 +50,17 @@ export const ArticleList = ({
     ))}
   </List>
 );
+
+const mapStateToProps = (state) => {
+  return {
+    photoData: state.photoData,
+    activeIndex: state.activeIndex,
+    openIndex: state.openIndex,
+    pausedOn: state.pausedOn,
+    page: state.page,
+    articlesPerPage: state.articlesPerPage,
+    clientDimensions: state.clientDimensions,
+  }
+};
+
+export const ArticleList = connect(mapStateToProps)(ArticleListBase)

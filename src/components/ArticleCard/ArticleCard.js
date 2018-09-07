@@ -1,7 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
 import { TimingAnimation, Easing } from 'react-spring/dist/addons';
+
+import { closeDetails, expandDetails, pauseOn } from '../../actions';
 
 const Card = styled(animated.div)`
   background-color: white;
@@ -146,7 +149,7 @@ const Timer = styled(animated.div)`
   `: ''}
 `;
 
-export const ArticleCard = ({
+const ArticleCardBase = ({
   text,
   title,
   linkUrl,
@@ -269,3 +272,27 @@ export const ArticleCard = ({
     )}
   </Spring>
 );
+
+const mapStateToProps = (state) => {
+  return {
+    photoData: state.photoData,
+    activeIndex: state.activeIndex,
+    openIndex: state.openIndex,
+    page: state.page,
+    articlesPerPage: state.articlesPerPage,
+    clientDimensions: state.clientDimensions,
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    closeDetails: () => dispatch(closeDetails()),
+    expandDetails: i => dispatch(expandDetails(i)),
+    pauseOn: i => dispatch(pauseOn(i)),
+  }
+};
+
+export const ArticleCard =  connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ArticleCardBase);

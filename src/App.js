@@ -9,7 +9,7 @@ import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import debounce from 'lodash/debounce';
 
-import { ListContainer, ImageContainer } from './containers';
+import { ArticleList, ImageRotator } from './components';
 
 import {
   setPhotos,
@@ -162,8 +162,8 @@ class App extends Component {
     return (
       <Wrapper innerRef={w => this.wrapper = w}>
         {(!!photoData && photoData.length > 0) && [
-          <ImageContainer key="photo" />,
-          <ListContainer key="list" />,
+          <ImageRotator key="photo" />,
+          <ArticleList key="list" />,
         ]}
       </Wrapper>
     );

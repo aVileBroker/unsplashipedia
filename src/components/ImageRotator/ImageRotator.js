@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import map from 'lodash/map';
 import get from 'lodash/get';
@@ -36,7 +37,7 @@ const Title = styled.div`
   background-image:linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0));
 `;
 
-export const ImageRotator = ({ photoData = [], activeIndex = 0, openIndex = null }) =>
+const ImageRotatorBase = ({ photoData = [], activeIndex = 0, openIndex = null }) =>
   map(photoData, (p, i) => (
     <Spring
       key={get(p, 'id')}
@@ -63,3 +64,13 @@ export const ImageRotator = ({ photoData = [], activeIndex = 0, openIndex = null
       </Image>
     )}</Spring>
   ));
+
+const mapStateToProps = (state) => {
+  return {
+    photoData: state.photoData,
+    activeIndex: state.activeIndex,
+    openIndex: state.openIndex,
+  }
+};
+
+export const ImageRotator =  connect(mapStateToProps)(ImageRotatorBase);
