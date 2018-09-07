@@ -5,6 +5,7 @@ const mapStateToProps = (state) => {
   return {
     photoData: state.photoData,
     activeIndex: state.activeIndex,
+    openIndex: state.openIndex,
   }
 };
 

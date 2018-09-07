@@ -36,7 +36,8 @@ const Title = styled.div`
   background-image:linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0));
 `;
 
-export const ImageRotator = ({ photoData = [], activeIndex = 0 }) => map(photoData, (p, i) => (
+export const ImageRotator = ({ photoData = [], activeIndex = 0, openIndex = null }) =>
+  map(photoData, (p, i) => (
     <Spring
       key={get(p, 'id')}
       impl={TimingAnimation}
@@ -44,10 +45,11 @@ export const ImageRotator = ({ photoData = [], activeIndex = 0 }) => map(photoDa
         duration: 600,
         easing: Easing.easeOut,
       }}
-      from={{ opacity: 0, zIndex: -1 }}
+      from={{ opacity: 0, zIndex: -1, filter: 'blur(0px)' }}
       to={{
         opacity: activeIndex === i ? 1 : 0,
         zIndex: activeIndex === i ? 0 : -1,
+        filter: openIndex !== null ? 'blur(8px)' : 'blur(0px)',
       }}
       native
     >{ styles => (
