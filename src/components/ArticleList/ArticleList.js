@@ -25,23 +25,32 @@ export const ArticleList = ({
   articlesPerPage,
 }) => (
   <List>
-    {map(photoData, ({ id, description, links, location, wikipediaDescription, user }, index) => (
-      <CardContainer
-        index={index}
+    {map(photoData, ({ id, description, links, location, wikipediaDescription, user }, index) => {
 
-        isActive={activeIndex === index}
-        isOpen={openIndex === index}
-        isPaused={pausedOn === index}
+      const hidden = (
+        (page + 1) * articlesPerPage < index ||
+        (page - 1) * articlesPerPage > index
+      );
 
-        key={id}
-        text={wikipediaDescription || description || 'Loading description from Wikipedia...'}
-        title={location.title}
-        linkUrl={links.html}
-        wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}
-        photogAvatar={user.profile_image.medium}
-        photogName={user.name}
-        photogLink={user.links.html}
-      />
-    ))}
+      return (
+        <CardContainer
+          index={index}
+
+          isActive={activeIndex === index}
+          isOpen={openIndex === index}
+          isPaused={pausedOn === index}
+          hidden={hidden}
+
+          key={id}
+          text={wikipediaDescription || description || 'Loading description from Wikipedia...'}
+          title={location.title}
+          linkUrl={links.html}
+          wikiUrl={`https://en.wikipedia.org/wiki/${location.name}`}
+          photogAvatar={user.profile_image.medium}
+          photogName={user.name}
+          photogLink={user.links.html}
+        />
+      );
+    })}
   </List>
 );

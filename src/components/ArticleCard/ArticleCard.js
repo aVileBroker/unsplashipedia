@@ -158,6 +158,7 @@ export const ArticleCard = ({
   page,
   clientDimensions,
   articlesPerPage,
+  hidden,
   index,
   isActive,
   isOpen,
@@ -200,6 +201,7 @@ export const ArticleCard = ({
         onClick={() => { pauseOn(index) }}
         isOpen={isOpen}
         style={{
+          display: hidden ? 'none' : 'flex',
           opacity: styles.opacity,
           height: styles.height,
           transform: styles.transform,
