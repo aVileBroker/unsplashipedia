@@ -49,6 +49,7 @@ const rootReducer = (state, action) => {
         ...state,
         pausedOn: pauseIndex,
         browsing: false,
+        scrollY: 0,
         activeIndex: action.index,
         openIndex: null,
         page: Math.floor(action.index / state.articlesPerPage),
@@ -58,6 +59,7 @@ const rootReducer = (state, action) => {
       return {
         ...state,
         browsing: action.browsing,
+        scrollY: 0,
       }
 
     case 'OFFSET_SCROLL':
