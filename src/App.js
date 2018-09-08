@@ -18,6 +18,7 @@ import {
   resume,
   pauseOn,
   setBrowse,
+  offsetScroll,
 } from './actions';
 
 const Wrapper = styled.div`
@@ -27,8 +28,8 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-const BrowseButton = styled.div`
-  background-image: url('images/view-module.svg'); // icon by Google
+const BrowseButton = styled.div`${({ browsing, scrollY }) => `
+  background-image: url('images/${browsing ? 'arrow-left' : 'view-module'}.svg'); // icons by Google
   background-position: center;
   background-size: 2rem;
   background-repeat: no-repeat;
@@ -43,8 +44,12 @@ const BrowseButton = styled.div`
   height: 3rem;
   border-radius: 50%;
 
+  transition: background-color .3s;
+
+  background-color: rgba(0, 0, 0, ${scrollY !== 0 ? '0.5' : browsing ? '0.1' : '0' });
+
   &:hover{ background-color: rgba(0, 0, 0, 0.2); }
-`;
+`}`;
 
 class App extends Component {
   constructor(props) {
@@ -177,14 +182,18 @@ class App extends Component {
   }
 
   render() {
-    const { photoData, setBrowse, browsing } = this.props;
+    const { photoData, setBrowse, offsetScroll, scrollY, browsing } = this.props;
 
     return (
-      <Wrapper innerRef={w => this.wrapper = w}>
+      <Wrapper innerRef={w => this.wrapper = w} onWheel={e => { if(browsing) offsetScroll(-e.deltaY)} }>
         {(!!photoData && photoData.length > 0) && [
           <ImageRotator key="photo" />,
           <ArticleList key="list" />,
-          <BrowseButton onClick={() => setBrowse(!browsing)} />,
+          <BrowseButton
+            browsing={browsing}
+            scrollY={scrollY}
+            onClick={() => setBrowse(!browsing)}
+          />,
         ]}
       </Wrapper>
     );
@@ -199,6 +208,7 @@ const mapStateToProps = state => {
     pausedOn: state.pausedOn,
     clientDimensions: state.clientDimensions,
     browsing: state.browsing,
+    scrollY: state.scrollY,
   }
 };
 
@@ -210,6 +220,7 @@ const mapDispatchToProps = dispatch => {
     resume: () => dispatch(resume()),
     pauseOn: i => dispatch(pauseOn(i)),
     setBrowse: b => dispatch(setBrowse(b)),
+    offsetScroll: o => dispatch(offsetScroll(o)),
   }
 };
 

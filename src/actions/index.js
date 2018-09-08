@@ -35,3 +35,8 @@ export const setBrowse = browsing => ({
   type: 'SET_BROWSE',
   browsing,
 });
+
+export const offsetScroll = scroll => ({
+  type: 'OFFSET_SCROLL',
+  scroll,
+});

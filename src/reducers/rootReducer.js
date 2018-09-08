@@ -60,6 +60,17 @@ const rootReducer = (state, action) => {
         browsing: action.browsing,
       }
 
+    case 'OFFSET_SCROLL':
+
+      const newScroll = state.scrollY + action.scroll >= Math.floor(state.photoData.length / state.articlesPerPage) * -164 + (state.clientDimensions.height / 2)
+        ? Math.min(0, state.scrollY + action.scroll)
+        : state.scrollY;
+
+      return {
+        ...state,
+        scrollY: newScroll,
+      }
+
     default:
       return state;
   }

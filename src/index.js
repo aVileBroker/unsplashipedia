@@ -19,6 +19,7 @@ const store = createStore(
     openIndex: null,
     pausedOn: null,
     browsing: false,
+    scrollY: 0,
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

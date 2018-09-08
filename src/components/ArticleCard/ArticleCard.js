@@ -154,12 +154,12 @@ const Timer = styled(animated.div)`
   `: ''}
 `;
 
-const getTransform = (index, page, articlesPerPage, clientDimensions, browsing) => {
+const getTransform = (index, page, articlesPerPage, clientDimensions, browsing, scrollY) => {
   if(browsing) {
     const xPosition = ((index % articlesPerPage) * 385) + 32;
     const yPosition = -clientDimensions.height + ((Math.floor(index / articlesPerPage) + 1) * (96 + 64) + 144);
 
-    return `translate(${xPosition}px, ${yPosition}px)`;
+    return `translate(${xPosition}px, ${yPosition + scrollY}px)`;
   }
 
   return `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 32)}px, 0px)`;
@@ -175,6 +175,7 @@ const ArticleCardBase = ({
   photogLink,
   activeIndex,
   browsing,
+  scrollY,
   page,
   clientDimensions,
   articlesPerPage,
@@ -217,7 +218,7 @@ const ArticleCardBase = ({
         : '304px',
       transform: isOpen
         ? `translate(-${Math.min(clientDimensions.width*.45, 304)}px, -64px)`
-        : getTransform(index, page, articlesPerPage, clientDimensions, browsing),
+        : getTransform(index, page, articlesPerPage, clientDimensions, browsing, scrollY),
       expandRotation: `rotate(${isOpen ? '0' : '45' }deg)`,
     }}
     native
@@ -305,6 +306,7 @@ const mapStateToProps = (state) => {
     articlesPerPage: state.articlesPerPage,
     clientDimensions: state.clientDimensions,
     browsing: state.browsing,
+    scrollY: state.scrollY,
   }
 };
 
