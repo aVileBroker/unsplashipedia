@@ -9,6 +9,8 @@ The whole idea behind the project is that it should be built around 3 components
 - A list for info cards
 - The cards themselves (which also turn into modals if you click the + button)
 
+There's also a tile view for quick navigation which can be scrolled - all with shared element animations. (they're not really shared, I just manage card position myself instead of relying on the browser)
+
 # Installing
 
 1) Clone the repo locally
