@@ -4,7 +4,12 @@ import styled from 'styled-components';
 import { animated, Spring, Transition, } from 'react-spring';
 import { TimingAnimation, Easing } from 'react-spring/dist/addons';
 
-import { closeDetails, expandDetails, pauseOn } from '../../actions';
+import {
+  closeDetails,
+  expandDetails,
+  pauseOn,
+  setBrowse,
+} from '../../actions';
 
 const Card = styled(animated.div)`
   background-color: white;
@@ -149,6 +154,17 @@ const Timer = styled(animated.div)`
   `: ''}
 `;
 
+const getTransform = (index, page, articlesPerPage, clientDimensions, browsing) => {
+  if(browsing) {
+    const xPosition = ((index % articlesPerPage) * 385) + 32;
+    const yPosition = -clientDimensions.height + ((Math.floor(index / articlesPerPage) + 1) * (96 + 64) + 144);
+
+    return `translate(${xPosition}px, ${yPosition}px)`;
+  }
+
+  return `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 32)}px, 0px)`;
+};
+
 const ArticleCardBase = ({
   text,
   title,
@@ -158,6 +174,7 @@ const ArticleCardBase = ({
   photogAvatar,
   photogLink,
   activeIndex,
+  browsing,
   page,
   clientDimensions,
   articlesPerPage,
@@ -186,15 +203,21 @@ const ArticleCardBase = ({
       expandRotation: 'rotate(45deg)',
     }}
     to={{
-      filter: (openIndex !== null && !isOpen) ? 'blur(2px)' : 'blur(0px)',
+      filter: (openIndex !== null && !isOpen) ? 'blur(4px)' : 'blur(0px)',
       height: isOpen
         ? `${clientDimensions.height - 240}px`
-        : isActive
+        : (isActive && !browsing)
           ? '304px'
           : '96px',
-      left: isOpen ? `${(clientDimensions.width/2) - 32 || -32}px` : '0px',
-      width: isOpen ? `${Math.min(((clientDimensions.width - 32) * .9), 608)}px` : '304px',
-      transform: isOpen ? `translate(-${Math.min(clientDimensions.width*.45, 304)}px, -64px)` : `translate(${(((index * 385) + (-1 * page * articlesPerPage * 385)) + 32)}px, 0px)`,
+      left: isOpen
+        ? `${(clientDimensions.width/2) - 32 || -32}px`
+        : '0px',
+      width: isOpen
+        ? `${Math.min(((clientDimensions.width - 32) * .9), 608)}px`
+        : '304px',
+      transform: isOpen
+        ? `translate(-${Math.min(clientDimensions.width*.45, 304)}px, -64px)`
+        : getTransform(index, page, articlesPerPage, clientDimensions, browsing),
       expandRotation: `rotate(${isOpen ? '0' : '45' }deg)`,
     }}
     native
@@ -204,7 +227,7 @@ const ArticleCardBase = ({
         onClick={() => { pauseOn(index) }}
         isOpen={isOpen}
         style={{
-          display: hidden ? 'none' : 'flex',
+          display: (hidden && !browsing) ? 'none' : 'flex',
           filter: styles.filter,
           height: styles.height,
           transform: styles.transform,
@@ -261,7 +284,7 @@ const ArticleCardBase = ({
           leave={{ transform: 'translateY(12rem)' }}
           native
         >
-          {isActive && ( styles => (
+          {(isActive && !browsing) && ( styles => (
             <LinkContainer style={styles} isOpen={isOpen}>
               <Link side="left" href={linkUrl}>VIEW PHOTO</Link>
               <Link side="right" href={wikiUrl}>READ MORE</Link>
@@ -281,6 +304,7 @@ const mapStateToProps = (state) => {
     page: state.page,
     articlesPerPage: state.articlesPerPage,
     clientDimensions: state.clientDimensions,
+    browsing: state.browsing,
   }
 };
 
@@ -289,6 +313,7 @@ const mapDispatchToProps = dispatch => {
     closeDetails: () => dispatch(closeDetails()),
     expandDetails: i => dispatch(expandDetails(i)),
     pauseOn: i => dispatch(pauseOn(i)),
+    setBrowse: b => dispatch(setBrowse(b)),
   }
 };
 

@@ -17,6 +17,7 @@ import {
   setClientDimensions,
   resume,
   pauseOn,
+  setBrowse,
 } from './actions';
 
 const Wrapper = styled.div`
@@ -24,6 +25,25 @@ const Wrapper = styled.div`
   font-family: Roboto Condensed, sans-serif;
   height: 100%;
   overflow: hidden;
+`;
+
+const BrowseButton = styled.div`
+  background-image: url('images/view-module.svg'); // icon by Google
+  background-position: center;
+  background-size: 2rem;
+  background-repeat: no-repeat;
+
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+
+  cursor: pointer;
+
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+
+  &:hover{ background-color: rgba(0, 0, 0, 0.2); }
 `;
 
 class App extends Component {
@@ -157,13 +177,14 @@ class App extends Component {
   }
 
   render() {
-    const { photoData } = this.props;
+    const { photoData, setBrowse, browsing } = this.props;
 
     return (
       <Wrapper innerRef={w => this.wrapper = w}>
         {(!!photoData && photoData.length > 0) && [
           <ImageRotator key="photo" />,
           <ArticleList key="list" />,
+          <BrowseButton onClick={() => setBrowse(!browsing)} />,
         ]}
       </Wrapper>
     );
@@ -177,6 +198,7 @@ const mapStateToProps = state => {
     activeIndex: state.activeIndex,
     pausedOn: state.pausedOn,
     clientDimensions: state.clientDimensions,
+    browsing: state.browsing,
   }
 };
 
@@ -187,6 +209,7 @@ const mapDispatchToProps = dispatch => {
     setClientDimensions: (d) => dispatch(setClientDimensions(d)),
     resume: () => dispatch(resume()),
     pauseOn: i => dispatch(pauseOn(i)),
+    setBrowse: b => dispatch(setBrowse(b)),
   }
 };
 

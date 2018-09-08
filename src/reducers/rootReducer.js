@@ -43,14 +43,21 @@ const rootReducer = (state, action) => {
       }
 
     case 'PAUSE_ON':
-      const puaseIndex = state.pausedOn === action.index ? null : action.index;
+      const pauseIndex = state.pausedOn === action.index ? null : action.index;
 
       return {
         ...state,
-        pausedOn: puaseIndex,
+        pausedOn: pauseIndex,
+        browsing: false,
         activeIndex: action.index,
         openIndex: null,
         page: Math.floor(action.index / state.articlesPerPage),
+      }
+
+    case 'SET_BROWSE':
+      return {
+        ...state,
+        browsing: action.browsing,
       }
 
     default:

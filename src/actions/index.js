@@ -30,3 +30,8 @@ export const goToPhoto = index => ({
   type: 'GO_TO_PHOTO',
   index,
 });
+
+export const setBrowse = browsing => ({
+  type: 'SET_BROWSE',
+  browsing,
+});

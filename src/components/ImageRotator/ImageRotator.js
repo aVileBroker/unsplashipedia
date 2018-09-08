@@ -26,7 +26,7 @@ const Image = styled(animated.div)`
 const Title = styled.div`
   color: white;
   font-size: 2.5rem;
-  padding: 2rem 3rem 10rem 3rem;
+  padding: 2rem 3rem 10rem 6rem;
   text-shadow: 0px .125rem .75rem rgba(0,0,0,0.25);
   z-index: 2;
   position: absolute;
@@ -37,7 +37,7 @@ const Title = styled.div`
   background-image:linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0));
 `;
 
-const ImageRotatorBase = ({ photoData = [], activeIndex = 0, openIndex = null }) =>
+const ImageRotatorBase = ({ photoData = [], activeIndex = 0, openIndex = null, browsing }) =>
   map(photoData, (p, i) => (
     <Spring
       key={get(p, 'id')}
@@ -50,7 +50,7 @@ const ImageRotatorBase = ({ photoData = [], activeIndex = 0, openIndex = null })
       to={{
         opacity: activeIndex === i ? 1 : 0,
         zIndex: activeIndex === i ? 0 : -1,
-        filter: openIndex !== null ? 'blur(8px)' : 'blur(0px)',
+        filter: (openIndex !== null || browsing) ? 'blur(8px)' : 'blur(0px)',
       }}
       native
     >{ styles => (
@@ -70,6 +70,7 @@ const mapStateToProps = (state) => {
     photoData: state.photoData,
     activeIndex: state.activeIndex,
     openIndex: state.openIndex,
+    browsing: state.browsing,
   }
 };
 
